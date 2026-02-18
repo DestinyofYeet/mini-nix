@@ -6,7 +6,7 @@ use std::{
 use anyhow::Error;
 use clap::Parser;
 
-use mini_nix_lib::parser::parse_text;
+use mini_nix_lib::entrypoint::run;
 use tracing::{debug, trace};
 use tracing_subscriber::EnvFilter;
 
@@ -42,15 +42,7 @@ pub fn main() -> Result<(), Error> {
 
         let input = std::fs::read_to_string(input_file)?;
 
-        match parse_text(input) {
-            Ok(_) => {}
-            Err(errors) => {
-                for error in errors {
-                    eprintln!("{error}");
-                }
-                exit(1);
-            }
-        }
+        run(input)?;
     } else {
         loop {
             print!("> ");
@@ -58,14 +50,7 @@ pub fn main() -> Result<(), Error> {
             let mut input = String::new();
             std::io::stdin().read_line(&mut input)?;
 
-            match parse_text(input) {
-                Ok(_) => {}
-                Err(errors) => {
-                    for error in errors {
-                        eprintln!("{error}");
-                    }
-                }
-            }
+            run(input)?;
         }
     }
 

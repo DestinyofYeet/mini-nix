@@ -1,3 +1,7 @@
+use std::collections::HashMap;
+
+use once_cell::sync::Lazy;
+
 /// TokenTypes
 #[derive(Debug)]
 pub enum TokenType {
@@ -13,7 +17,7 @@ pub enum TokenType {
 #[derive(Debug)]
 pub enum LiteralToken {
     Identifier(String),
-    Str(String),
+    String(String),
     Integer(i64),
     Float(f64),
 }
@@ -55,11 +59,27 @@ pub enum LogicToken {
 }
 
 /// Tokens that are keywords
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum KeywordToken {
     And,
     Or,
     If,
     True,
     False,
+}
+
+static ALL_KEYWORDS: Lazy<HashMap<&'static str, KeywordToken>> = Lazy::new(|| {
+    let mut map = HashMap::new();
+    map.insert("and", KeywordToken::And);
+    map.insert("or", KeywordToken::Or);
+    map.insert("if", KeywordToken::If);
+    map.insert("true", KeywordToken::True);
+    map.insert("false", KeywordToken::False);
+
+    map
+});
+impl KeywordToken {
+    pub fn is_keyword(input: &str) -> Option<KeywordToken> {
+        ALL_KEYWORDS.get(input).copied()
+    }
 }

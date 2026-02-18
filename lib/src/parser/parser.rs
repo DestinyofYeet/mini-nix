@@ -4,11 +4,11 @@ use crate::parser::{
     error::ParserError,
     token::{
         Token,
-        types::{LiteralToken, LogicToken, MathToken, MiscToken, TokenType},
+        types::{KeywordToken, LiteralToken, LogicToken, MathToken, MiscToken, TokenType},
     },
 };
 
-pub fn parse_text(source: String) -> Result<(), Vec<ParserError>> {
+pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
     let mut line: usize = 1;
     let mut column: usize = 0;
 
@@ -165,6 +165,33 @@ pub fn parse_text(source: String) -> Result<(), Vec<ParserError>> {
                 }
             }
 
+            'a'..='z' | 'A'..='Z' => {
+                let mut index = 0;
+                loop {
+                    let (i, next) = match iterator.peek() {
+                        None => break,
+                        Some(value) => value,
+                    };
+
+                    if next.is_ascii_alphanumeric() {
+                        index = *i;
+                        iterator.next();
+                    } else {
+                        break;
+                    }
+                }
+
+                let value = source.get(char_location..index + 1).unwrap().to_string();
+
+                // this is an index, but we need to know how many chars are in it (e.g. index 2 => 3 elements)
+                token_width = index - char_location + 1;
+
+                match KeywordToken::is_keyword(&value) {
+                    Some(keyword) => TokenType::Keyword(keyword),
+                    None => TokenType::Literal(LiteralToken::Identifier(value)),
+                }
+            }
+
             '"' => {
                 let mut index = 0;
                 while let Some((i, next)) = iterator.next()
@@ -191,7 +218,7 @@ pub fn parse_text(source: String) -> Result<(), Vec<ParserError>> {
                 // we want to capture the "raw" string. +2 for the quotes
                 token_width = index - char_location + 2;
 
-                TokenType::Literal(LiteralToken::Str(value))
+                TokenType::Literal(LiteralToken::String(value))
             }
 
             _ => {
@@ -220,11 +247,9 @@ pub fn parse_text(source: String) -> Result<(), Vec<ParserError>> {
         line,
     ));
 
-    trace!("{tokens:?}");
-
     if !errors.is_empty() {
         return Err(errors);
     }
 
-    Ok(())
+    Ok(tokens)
 }
