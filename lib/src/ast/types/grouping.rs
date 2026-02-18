@@ -1,13 +1,23 @@
-use crate::ast::types::expression::{Expr, Visitor};
+use crate::ast::types::{
+    Expression,
+    expression::{Expr, Visitor},
+};
 
-pub struct Grouping<E>
-where
-    E: Expr,
-{
-    pub expr: E,
+pub struct Grouping {
+    pub expr: Box<Expression>,
 }
 
-impl<E: Expr> Expr for Grouping<E> {
+impl Grouping {
+    pub fn create(expr: Expression) -> Expression {
+        let grouping = Self {
+            expr: Box::new(expr),
+        };
+
+        Expression::Grouping(grouping)
+    }
+}
+
+impl Expr for Grouping {
     fn accept<TY, T: Visitor<TY>>(&self, visitor: &T) -> TY {
         visitor.visit_grouping(self)
     }

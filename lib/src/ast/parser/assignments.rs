@@ -1,46 +1,27 @@
 use crate::{
     ast::{
         parser::{AstParser, error::SyntaxError},
-        types::{Binary, Expr, Literal},
+        types::{Binary, Expr, Expression},
     },
-    lexer::token::{
-        Token,
-        types::{LiteralToken, LogicToken, TokenType},
-    },
+    lexer::token::types::{LogicToken, TokenType},
 };
 
 impl AstParser {
-    pub fn parse_assignment(&mut self) -> Result<impl Expr, SyntaxError> {
-        let expr = match self.next() {
-            Some(token) => match token.r#type {
-                TokenType::Literal(LiteralToken::Identifier(_)) => Literal {
-                    literal: token.clone(),
-                },
-
-                _ => {
-                    return Err(SyntaxError::SyntaxError {
-                        line: token.line,
-                        column: token.column,
-                        msg: "Expected Identifier".to_string(),
-                    });
-                }
-            },
-            None => {
-                return Err(SyntaxError::SyntaxError {
-                    line: 0,
-                    column: 0,
-                    msg: "Expected Identifier".to_string(),
-                });
-            }
-        };
+    pub fn parse_assignment(&mut self) -> Result<Expression, SyntaxError> {
+        let expr = self.parse_identifier()?;
 
         let operator = match self.is_match(&[TokenType::Logic(LogicToken::Equal)]) {
             Some(token) => token,
 
             None => {
+                let (mut line, mut column) = (0, 0);
+                if let Some(current) = self.current() {
+                    line = current.line;
+                    column = current.column;
+                }
                 return Err(SyntaxError::SyntaxError {
-                    line: expr.literal.line,
-                    column: expr.literal.column,
+                    line,
+                    column,
                     msg: "= expected".to_string(),
                 });
             }
@@ -48,10 +29,6 @@ impl AstParser {
 
         let primary = self.parse_primary()?;
 
-        Ok(Binary {
-            left: expr,
-            operator,
-            right: primary,
-        })
+        Ok(Binary::create(expr, operator, primary))
     }
 }

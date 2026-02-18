@@ -10,7 +10,7 @@ impl AstPrinter {
 }
 
 impl Visitor<String> for AstPrinter {
-    fn visit_binary<L: Expr, R: Expr>(&self, b: &Binary<L, R>) -> String {
+    fn visit_binary(&self, b: &Binary) -> String {
         format!(
             "({} {} {})",
             b.operator.unparsed,
@@ -19,11 +19,11 @@ impl Visitor<String> for AstPrinter {
         )
     }
 
-    fn visit_grouping<E: Expr>(&self, g: &Grouping<E>) -> String {
+    fn visit_grouping(&self, g: &Grouping) -> String {
         format!("(group {})", g.expr.accept(self))
     }
 
-    fn visit_unary<R: Expr>(&self, u: &Unary<R>) -> String {
+    fn visit_unary(&self, u: &Unary) -> String {
         format!("({} {})", u.operator.unparsed, u.right.accept(self))
     }
 

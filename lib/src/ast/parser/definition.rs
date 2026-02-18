@@ -1,23 +1,26 @@
 use crate::{
-    ast::{
-        parser::error::SyntaxError,
-        types::{Expr, Literal},
-    },
+    ast::{parser::error::SyntaxError, types::Expr},
     lexer::token::{
         Token,
-        types::{LiteralToken, LogicToken, TokenType},
+        types::{MiscToken, TokenType},
     },
 };
 
 /// This will take tokens and generate an AST
 /// Grammar (non-exhaustive):
-/// expression -> (assignment | primary) ';'
-/// assignment -> identifier '=' primary
-/// primary    -> number | string | bool
+/// start         -> expression ';'
+/// expression    -> (assignment | primary | arithmetic)
+/// assignment    -> identifier '=' primary
+/// primary       -> numbers | string | bool | '(' expression ')'
+/// arithmetic    -> arithmeticMul ( ( "-" | "+" ) arithmetic )*
+/// arithmeticMul -> numbers ( ( "/" | "*" ) arithmeticMul )*
+/// numbers       -> float | int
 pub struct AstParser {
     tokens: Vec<Token>,
     index: usize,
 }
+
+#[allow(dead_code)]
 impl AstParser {
     pub fn new(tokenstream: Vec<Token>) -> Self {
         Self {
@@ -74,20 +77,29 @@ impl AstParser {
     }
 
     pub fn parse(&mut self) -> Result<impl Expr, Vec<SyntaxError>> {
-        let mut errors: Vec<SyntaxError> = Vec::new();
+        let mut errors = Vec::<SyntaxError>::new();
 
-        let res = match self.parse_assignment() {
-            Ok(expr) => Some(expr),
-            Err(e) => {
-                errors.push(e);
-                None
+        match self.parse_expression() {
+            Err(mut e) => {
+                errors.append(&mut e);
+
+                Err(errors)
             }
-        };
+            Ok(value) => {
+                if let Some(token) = self.next()
+                    && token.r#type != TokenType::Misc(MiscToken::Semicolon)
+                {
+                    errors.push(SyntaxError::SyntaxError {
+                        line: token.line,
+                        column: token.column,
+                        msg: "Expected ';'".to_string(),
+                    });
 
-        if res.is_none() {
-            return Err(errors);
+                    return Err(errors);
+                }
+
+                Ok(value)
+            }
         }
-
-        return Ok(res.unwrap());
     }
 }

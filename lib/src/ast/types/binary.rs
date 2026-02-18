@@ -1,19 +1,27 @@
 use crate::{
-    ast::types::{Expr, Visitor},
+    ast::types::{Expr, Expression, Visitor},
     lexer::token::Token,
 };
 
-pub struct Binary<L, R>
-where
-    L: Expr,
-    R: Expr,
-{
-    pub left: L,
+pub struct Binary {
+    pub left: Box<Expression>,
     pub operator: Token,
-    pub right: R,
+    pub right: Box<Expression>,
 }
 
-impl<L: Expr, R: Expr> Expr for Binary<L, R> {
+impl Binary {
+    pub fn create(left: Expression, operator: Token, right: Expression) -> Expression {
+        let binary = Self {
+            left: Box::new(left),
+            operator,
+            right: Box::new(right),
+        };
+
+        Expression::Binary(binary)
+    }
+}
+
+impl Expr for Binary {
     fn accept<E, T: Visitor<E>>(&self, visitor: &T) -> E {
         visitor.visit_binary(self)
     }

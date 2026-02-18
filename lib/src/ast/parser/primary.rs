@@ -1,13 +1,13 @@
 use crate::{
     ast::{
         parser::{AstParser, error::SyntaxError},
-        types::Literal,
+        types::{Expression, Literal},
     },
     lexer::token::types::{KeywordToken, LiteralToken, TokenType},
 };
 
 impl AstParser {
-    pub fn parse_primary(&mut self) -> Result<Literal, SyntaxError> {
+    pub fn parse_primary(&mut self) -> Result<Expression, SyntaxError> {
         if let Some(value) = self.next() {
             let result = match value.r#type {
                 TokenType::Keyword(KeywordToken::True)
@@ -27,7 +27,7 @@ impl AstParser {
                 }
             };
 
-            Ok(result)
+            Ok(Expression::Literal(result))
         } else {
             Err(SyntaxError::SyntaxError {
                 line: 0,

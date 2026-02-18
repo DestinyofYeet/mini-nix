@@ -2,7 +2,7 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum SyntaxError {
-    #[error("Syntax error at {}:{}. {}", .line, .column, .msg)]
+    #[error("Syntax error at {}:{} {}", .line, .column, .msg)]
     SyntaxError {
         line: usize,
         column: usize,

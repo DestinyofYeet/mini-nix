@@ -1,7 +1,6 @@
 #[cfg(test)]
 mod test {
     use crate::lexer::{
-        parse_text,
         tests::definition::LexerTest,
         token::{
             Token,

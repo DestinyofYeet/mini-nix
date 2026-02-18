@@ -1,7 +1,4 @@
-use std::{
-    io::{Read, Write},
-    process::exit,
-};
+use std::{io::Write, process::exit};
 
 use anyhow::Error;
 use clap::Parser;
