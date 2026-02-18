@@ -2,7 +2,10 @@ use thiserror::Error;
 use tracing::trace;
 
 use crate::{
-    ast::ast_test,
+    ast::{
+        parser::{AstParser, error::SyntaxError},
+        printer::AstPrinter,
+    },
     lexer::{error::ParserError, parse_text},
 };
 
@@ -10,6 +13,9 @@ use crate::{
 pub enum Error {
     #[error("Error while parsing: \n{0}")]
     Parse(String),
+
+    #[error("Syntax error: \n{0}")]
+    Syntax(String),
 }
 
 impl From<Vec<ParserError>> for Error {
@@ -24,10 +30,28 @@ impl From<Vec<ParserError>> for Error {
     }
 }
 
+impl From<Vec<SyntaxError>> for Error {
+    fn from(value: Vec<SyntaxError>) -> Self {
+        let mut string = String::new();
+
+        for error in value {
+            string += &error.to_string();
+        }
+
+        Self::Syntax(string)
+    }
+}
+
 pub fn run(source: String) -> Result<(), Error> {
-    ast_test();
     let tokens = parse_text(source)?;
     trace!("{tokens:?}");
+
+    let mut parser = AstParser::new(tokens);
+
+    let expr = parser.parse()?;
+
+    let result = AstPrinter::print(expr);
+    trace!("ast: {result}");
 
     Ok(())
 }

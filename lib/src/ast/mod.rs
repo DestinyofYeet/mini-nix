@@ -1,5 +1,3 @@
-mod definition;
+pub mod parser;
 pub(crate) mod printer;
 pub(crate) mod types;
-
-pub use definition::*;

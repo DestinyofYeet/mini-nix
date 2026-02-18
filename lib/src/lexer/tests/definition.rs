@@ -13,7 +13,7 @@ impl LexerTest {
     }
 
     pub(super) fn expect_single_token(input: &str, token: TokenType) {
-        let expected = vec![Token::new(token, input.to_string(), 1)];
+        let expected = vec![Token::new(token, input.to_string(), 1, 1)];
 
         Self::single_line_test(input, expected);
     }

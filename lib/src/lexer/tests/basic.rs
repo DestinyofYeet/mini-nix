@@ -26,6 +26,16 @@ mod test {
     }
 
     #[test]
+    pub fn left_bracket() {
+        LexerTest::expect_single_token("[", TokenType::Misc(MiscToken::LeftBracket));
+    }
+
+    #[test]
+    pub fn right_bracket() {
+        LexerTest::expect_single_token("]", TokenType::Misc(MiscToken::RightBracket));
+    }
+
+    #[test]
     pub fn comma() {
         LexerTest::expect_single_token(",", TokenType::Misc(MiscToken::Comma));
     }

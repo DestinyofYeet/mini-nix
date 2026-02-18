@@ -62,6 +62,8 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
             ')' => TokenType::Misc(MiscToken::RightParen),
             '{' => TokenType::Misc(MiscToken::LeftBrace),
             '}' => TokenType::Misc(MiscToken::RightBrace),
+            '[' => TokenType::Misc(MiscToken::LeftBracket),
+            ']' => TokenType::Misc(MiscToken::RightBracket),
             '#' => {
                 loop {
                     let (_, next) = match iterator.next() {
@@ -290,7 +292,7 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
             }
         };
 
-        tokens.push(Token::new(token_type, source_value, line));
+        tokens.push(Token::new(token_type, source_value, line, column));
     }
 
     tokens.push(Token::get_eof_token(line));

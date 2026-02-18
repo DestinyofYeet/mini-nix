@@ -43,10 +43,11 @@ pub enum MiscToken {
     RightParen,
     LeftBrace,
     RightBrace,
+    LeftBracket,
+    RightBracket,
     Comma,
     Dot,
     Semicolon,
-    Comment,
 
     Eof,
 }
@@ -80,6 +81,8 @@ pub enum KeywordToken {
     If,
     True,
     False,
+    Let,
+    In,
 }
 
 static ALL_KEYWORDS: Lazy<HashMap<&'static str, KeywordToken>> = Lazy::new(|| {
@@ -89,6 +92,8 @@ static ALL_KEYWORDS: Lazy<HashMap<&'static str, KeywordToken>> = Lazy::new(|| {
     map.insert("if", KeywordToken::If);
     map.insert("true", KeywordToken::True);
     map.insert("false", KeywordToken::False);
+    map.insert("let", KeywordToken::Let);
+    map.insert("in", KeywordToken::In);
 
     map
 });

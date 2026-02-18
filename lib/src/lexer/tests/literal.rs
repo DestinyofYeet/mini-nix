@@ -28,11 +28,13 @@ mod test {
                     TokenType::Literal(LiteralToken::Identifier("a".to_string())),
                     "a".to_string(),
                     1,
+                    1,
                 ),
                 Token::new(
                     TokenType::Literal(LiteralToken::Identifier("a".to_string())),
                     "a".to_string(),
                     1,
+                    3,
                 ),
             ],
         );
@@ -63,6 +65,7 @@ mod test {
                 TokenType::Literal(LiteralToken::String("a\nb".to_string())),
                 "\"a\nb\"",
                 2,
+                0,
             ),
             Token::get_eof_token(2),
         ];

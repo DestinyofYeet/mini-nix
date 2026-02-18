@@ -1,8 +1,9 @@
 use crate::lexer::token::types::TokenType;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Token {
-    pub(crate) r#type: TokenType,
-    pub(crate) unparsed: String,
-    pub(crate) line: usize,
+    pub r#type: TokenType,
+    pub unparsed: String,
+    pub line: usize,
+    pub column: usize,
 }

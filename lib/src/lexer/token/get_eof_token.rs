@@ -5,6 +5,6 @@ use crate::lexer::token::{
 
 impl Token {
     pub(crate) fn get_eof_token(line: usize) -> Self {
-        Self::new(TokenType::Misc(MiscToken::Eof), String::new(), line)
+        Self::new(TokenType::Misc(MiscToken::Eof), String::new(), line, 0)
     }
 }

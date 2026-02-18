@@ -36,6 +36,7 @@ mod test {
                 TokenType::Literal(LiteralToken::Integer(1)),
                 "1.".to_string(),
                 1,
+                1,
             )],
         );
     }
@@ -47,8 +48,8 @@ mod test {
         LexerTest::single_line_test(
             input,
             vec![
-                Token::new(TokenType::Literal(LiteralToken::Float(1.0)), "1.0", 1),
-                Token::new(TokenType::Literal(LiteralToken::Float(2.0)), "2.0", 1),
+                Token::new(TokenType::Literal(LiteralToken::Float(1.0)), "1.0", 1, 1),
+                Token::new(TokenType::Literal(LiteralToken::Float(2.0)), "2.0", 1, 3),
             ],
         );
     }
