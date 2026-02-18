@@ -31,7 +31,14 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
 
     let is_at_end = |index: usize| index >= iterator_max;
 
-    while let Some((char_location, char)) = iterator.next() {
+    let index_source = |start: usize, end: usize| -> Result<&str, ParserError> {
+        match source.get(start..end) {
+            Some(res) => Ok(res),
+            None => Err(ParserError::WrongIndex { start, end }),
+        }
+    };
+
+    while let Some((char_index, char)) = iterator.next() {
         let mut token_width = 1;
 
         column += 1;
@@ -47,6 +54,7 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
             }
 
             ' ' => {
+                trace!("Skipped space");
                 continue;
             }
 
@@ -54,7 +62,22 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
             ')' => TokenType::Misc(MiscToken::RightParen),
             '{' => TokenType::Misc(MiscToken::LeftBrace),
             '}' => TokenType::Misc(MiscToken::RightBrace),
-            '#' => TokenType::Misc(MiscToken::Comment),
+            '#' => {
+                loop {
+                    let (_, next) = match iterator.next() {
+                        None => break,
+                        Some(value) => value,
+                    };
+
+                    if next == '\n' {
+                        advance_line();
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+                continue;
+            }
             ',' => TokenType::Misc(MiscToken::Comma),
             '.' => TokenType::Misc(MiscToken::Dot),
             ';' => TokenType::Misc(MiscToken::Semicolon),
@@ -65,7 +88,7 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
             '*' => TokenType::Math(MathToken::Star),
 
             '!' => {
-                if match_next("=", char_location) {
+                if match_next("=", char_index) {
                     token_width = 2;
                     iterator.next();
 
@@ -77,7 +100,7 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
 
             '=' => TokenType::Logic(LogicToken::Equal),
             '<' => {
-                if match_next("=", char_location) {
+                if match_next("=", char_index) {
                     token_width = 2;
                     iterator.next();
                     TokenType::Logic(LogicToken::LessEqual)
@@ -87,7 +110,7 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
             }
 
             '>' => {
-                if match_next("=", char_location) {
+                if match_next("=", char_index) {
                     token_width = 2;
                     iterator.next();
                     TokenType::Logic(LogicToken::GreaterEqual)
@@ -98,7 +121,7 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
 
             '0'..='9' => {
                 let mut is_float = false;
-                let mut index = 0;
+                let mut index = char_index;
                 loop {
                     let (i, next) = match iterator.peek() {
                         None => break,
@@ -114,9 +137,12 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
                 }
 
                 if match_next(".", index) {
+                    is_float = true;
                     iterator.next();
                     index += 1;
                 }
+
+                let index_copy = index;
 
                 loop {
                     let (i, next) = match iterator.peek() {
@@ -125,7 +151,6 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
                     };
 
                     if next.is_ascii_digit() {
-                        is_float = true;
                         index = *i;
                         iterator.next();
                     } else {
@@ -133,11 +158,27 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
                     }
                 }
 
-                let value = source.get(char_location..index + 1).unwrap().to_string();
+                let mut malformed_float = false;
 
-                token_width = index - char_location;
+                // we have a malformed float (1.)
+                if index == index_copy && is_float {
+                    malformed_float = true;
+                }
 
-                if is_float {
+                let value = {
+                    let index = if malformed_float { index - 1 } else { index };
+                    match index_source(char_index, index + 1) {
+                        Ok(value) => value.to_string(),
+                        Err(e) => {
+                            errors.push(e);
+                            continue;
+                        }
+                    }
+                };
+
+                token_width = index - char_index + 1;
+
+                if is_float && !malformed_float {
                     match value.parse::<f64>() {
                         Ok(float) => TokenType::Literal(LiteralToken::Float(float)),
                         Err(e) => {
@@ -166,7 +207,7 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
             }
 
             'a'..='z' | 'A'..='Z' => {
-                let mut index = 0;
+                let mut index = char_index;
                 loop {
                     let (i, next) = match iterator.peek() {
                         None => break,
@@ -181,10 +222,16 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
                     }
                 }
 
-                let value = source.get(char_location..index + 1).unwrap().to_string();
+                let value = match index_source(char_index, index + 1) {
+                    Ok(val) => val.to_string(),
+                    Err(e) => {
+                        errors.push(e);
+                        continue;
+                    }
+                };
 
                 // this is an index, but we need to know how many chars are in it (e.g. index 2 => 3 elements)
-                token_width = index - char_location + 1;
+                token_width = index - char_index + 1;
 
                 match KeywordToken::is_keyword(&value) {
                     Some(keyword) => TokenType::Keyword(keyword),
@@ -193,7 +240,7 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
             }
 
             '"' => {
-                let mut index = 0;
+                let mut index = char_index;
                 while let Some((i, next)) = iterator.next()
                     && next != '"'
                 {
@@ -204,19 +251,23 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
                     index = i;
                 }
 
-                if is_at_end(index) {
-                    errors.push(ParserError::UnfinishedString { line });
+                // + 1 checks for a closing quote
+                if is_at_end(index) || is_at_end(index + 1) {
+                    errors.push(ParserError::UnfinishedString { line, column });
 
                     continue;
                 }
 
-                let value = source
-                    .get(char_location + 1..index + 1)
-                    .unwrap()
-                    .to_string();
+                let value = match index_source(char_index + 1, index + 1) {
+                    Ok(val) => val.to_string(),
+                    Err(e) => {
+                        errors.push(e);
+                        continue;
+                    }
+                };
 
                 // we want to capture the "raw" string. +2 for the quotes
-                token_width = index - char_location + 2;
+                token_width = index - char_index + 2;
 
                 TokenType::Literal(LiteralToken::String(value))
             }
@@ -231,21 +282,18 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
             }
         };
 
-        tokens.push(Token::new(
-            token_type,
-            source
-                .get(char_location..char_location + token_width)
-                .unwrap()
-                .to_string(),
-            line,
-        ));
+        let source_value = match index_source(char_index, char_index + token_width) {
+            Ok(e) => e.to_string(),
+            Err(e) => {
+                errors.push(e);
+                continue;
+            }
+        };
+
+        tokens.push(Token::new(token_type, source_value, line));
     }
 
-    tokens.push(Token::new(
-        TokenType::Misc(MiscToken::Eof),
-        String::new(),
-        line,
-    ));
+    tokens.push(Token::get_eof_token(line));
 
     if !errors.is_empty() {
         return Err(errors);

@@ -7,7 +7,7 @@ use anyhow::Error;
 use clap::Parser;
 
 use mini_nix_lib::entrypoint::run;
-use tracing::{debug, trace};
+use tracing::{debug, error, trace};
 use tracing_subscriber::EnvFilter;
 
 use crate::args::Args;
@@ -50,7 +50,9 @@ pub fn main() -> Result<(), Error> {
             let mut input = String::new();
             std::io::stdin().read_line(&mut input)?;
 
-            run(input)?;
+            if let Err(e) = run(input) {
+                error!("{e}");
+            }
         }
     }
 
