@@ -1,16 +1,25 @@
 {
   description = "A very basic flake";
 
-  inputs = { nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable"; };
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    rust-overlay.url = "github:oxalica/rust-overlay";
+  };
 
-  outputs = { self, nixpkgs, }@inputs:
-    let pkgs = import nixpkgs { system = "x86_64-linux"; };
-    in {
+  outputs =
+    { self, nixpkgs, ... }@inputs:
+    let
+      overlays = [ (import inputs.rust-overlay) ];
+      pkgs = import nixpkgs {
+        system = "x86_64-linux";
+        inherit overlays;
+      };
+
+    in
+    {
       devShells.x86_64-linux.default = pkgs.mkShell {
         nativeBuildInputs = with pkgs; [
-          rustc
-          cargo
-          clippy
+          (rust-bin.selectLatestNightlyWith (toolchain: toolchain.default))
           # openssl
           # pkg-config
           rust-analyzer

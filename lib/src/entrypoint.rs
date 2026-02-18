@@ -1,7 +1,10 @@
 use thiserror::Error;
 use tracing::trace;
 
-use crate::parser::{error::ParserError, parse_text};
+use crate::{
+    ast::ast_test,
+    parser::{error::ParserError, parse_text},
+};
 
 #[derive(Error, Debug)]
 pub enum Error {
@@ -22,6 +25,7 @@ impl From<Vec<ParserError>> for Error {
 }
 
 pub fn run(source: String) -> Result<(), Error> {
+    ast_test();
     let tokens = parse_text(source)?;
     trace!("{tokens:?}");
 

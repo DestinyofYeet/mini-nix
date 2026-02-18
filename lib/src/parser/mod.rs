@@ -1,8 +1,8 @@
 pub mod error;
-mod parser;
+pub(crate) mod parser;
 #[cfg(test)]
 mod tests;
 
-mod token;
+pub(crate) mod token;
 
-pub use parser::*;
+pub(crate) use parser::*;
