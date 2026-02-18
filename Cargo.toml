@@ -1,6 +1,7 @@
-[package]
-name = "mini-nix"
-version = "0.1.0"
-edition = "2024"
+[workspace]
+members = [
+  "lib",
+  "bin",
+]
 
-[dependencies]
+resolver = "3"
