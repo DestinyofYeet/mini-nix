@@ -1,4 +1,4 @@
-use crate::parser::token::types::TokenType;
+use crate::lexer::token::types::TokenType;
 
 #[derive(Debug, PartialEq)]
 pub struct Token {

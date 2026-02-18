@@ -1,10 +1,10 @@
-use crate::parser::{
+use crate::lexer::{
     parse_text,
     token::{Token, types::TokenType},
 };
 
-pub(super) struct ParserTest {}
-impl ParserTest {
+pub(super) struct LexerTest {}
+impl LexerTest {
     /// Do a test.
     /// `expected` should not include a EOF token, since it will be added
     pub(super) fn single_line_test(input: &str, mut expected: Vec<Token>) {

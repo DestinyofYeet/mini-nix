@@ -1,6 +1,6 @@
 use crate::{
     ast::types::{Expr, Visitor},
-    parser::token::Token,
+    lexer::token::Token,
 };
 
 pub struct Binary<L, R>

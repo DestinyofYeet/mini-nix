@@ -1,6 +1,6 @@
 use crate::{
     ast::types::expression::{Expr, Visitor},
-    parser::token::Token,
+    lexer::token::Token,
 };
 
 pub struct Unary<R>

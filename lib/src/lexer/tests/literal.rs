@@ -1,10 +1,10 @@
 #[cfg(test)]
 mod test {
 
-    use crate::parser::{
+    use crate::lexer::{
         error::ParserError,
         parse_text,
-        tests::definition::ParserTest,
+        tests::definition::LexerTest,
         token::{
             Token,
             types::{LiteralToken, TokenType},
@@ -13,7 +13,7 @@ mod test {
 
     #[test]
     pub fn identifier_single() {
-        ParserTest::expect_single_token(
+        LexerTest::expect_single_token(
             "a",
             TokenType::Literal(LiteralToken::Identifier("a".to_string())),
         );
@@ -21,7 +21,7 @@ mod test {
 
     #[test]
     pub fn identifier_multi() {
-        ParserTest::single_line_test(
+        LexerTest::single_line_test(
             "a a",
             vec![
                 Token::new(
@@ -40,7 +40,7 @@ mod test {
 
     #[test]
     pub fn string_single() {
-        ParserTest::expect_single_token(
+        LexerTest::expect_single_token(
             r#""a""#,
             TokenType::Literal(LiteralToken::String("a".to_string())),
         );
@@ -48,10 +48,26 @@ mod test {
 
     #[test]
     pub fn string_multi() {
-        ParserTest::expect_single_token(
+        LexerTest::expect_single_token(
             r#""abc""#,
             TokenType::Literal(LiteralToken::String("abc".to_string())),
         );
+    }
+
+    #[test]
+    pub fn string_multiline() {
+        let input = "\"a\nb\"".to_string();
+        let result = parse_text(input).unwrap();
+        let expected = vec![
+            Token::new(
+                TokenType::Literal(LiteralToken::String("a\nb".to_string())),
+                "\"a\nb\"",
+                2,
+            ),
+            Token::get_eof_token(2),
+        ];
+
+        assert_eq!(result, expected)
     }
 
     #[test]

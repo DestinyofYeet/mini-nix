@@ -3,7 +3,7 @@ use tracing::trace;
 
 use crate::{
     ast::ast_test,
-    parser::{error::ParserError, parse_text},
+    lexer::{error::ParserError, parse_text},
 };
 
 #[derive(Error, Debug)]

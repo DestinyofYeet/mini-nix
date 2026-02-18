@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod test {
-    use crate::parser::{
+    use crate::lexer::{
         parse_text,
-        tests::definition::ParserTest,
+        tests::definition::LexerTest,
         token::{
             Token,
             types::{LiteralToken, MathToken, TokenType},
@@ -13,7 +13,7 @@ mod test {
     pub fn addition_int() {
         let input = r#"1 + 2"#;
 
-        ParserTest::single_line_test(
+        LexerTest::single_line_test(
             input,
             vec![
                 Token::new(TokenType::Literal(LiteralToken::Integer(1)), "1", 1),
@@ -27,7 +27,7 @@ mod test {
     pub fn addition_float() {
         let input = r#"1.0 + 2.0"#;
 
-        ParserTest::single_line_test(
+        LexerTest::single_line_test(
             input,
             vec![
                 Token::new(TokenType::Literal(LiteralToken::Float(1.0)), "1.0", 1),

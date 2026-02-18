@@ -3,14 +3,14 @@ use crate::{
         printer::AstPrinter,
         types::{Binary, Expr, Grouping, Literal, Unary},
     },
-    parser::token::{
+    lexer::token::{
         Token,
         types::{LiteralToken, MathToken, TokenType},
     },
 };
 
 pub fn ast_test() {
-    let expr: impl Expr = Binary {
+    let expr = Binary {
         left: Unary {
             operator: Token::new(TokenType::Math(MathToken::Minus), "-", 1),
             right: Literal {

@@ -1,6 +1,6 @@
 use tracing::trace;
 
-use crate::parser::{
+use crate::lexer::{
     error::ParserError,
     token::{
         Token,

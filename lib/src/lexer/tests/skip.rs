@@ -1,15 +1,15 @@
 #[cfg(test)]
 mod test {
-    use crate::parser::{parse_text, tests::definition::ParserTest, token::Token};
+    use crate::lexer::{parse_text, tests::definition::LexerTest, token::Token};
 
     #[test]
     pub fn skip_single_space() {
-        ParserTest::single_line_test(" ", vec![]);
+        LexerTest::single_line_test(" ", vec![]);
     }
 
     #[test]
     pub fn skip_multi_space() {
-        ParserTest::single_line_test("   ", vec![]);
+        LexerTest::single_line_test("   ", vec![]);
     }
 
     #[test]

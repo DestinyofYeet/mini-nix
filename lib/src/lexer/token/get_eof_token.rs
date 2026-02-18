@@ -1,4 +1,4 @@
-use crate::parser::token::{
+use crate::lexer::token::{
     Token,
     types::{MiscToken, TokenType},
 };
