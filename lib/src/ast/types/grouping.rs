@@ -3,6 +3,7 @@ use crate::ast::types::{
     expression::{Expr, Visitor},
 };
 
+#[derive(Debug)]
 pub struct Grouping {
     pub expr: Box<Expression>,
 }

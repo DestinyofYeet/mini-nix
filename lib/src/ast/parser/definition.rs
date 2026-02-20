@@ -1,3 +1,5 @@
+use tracing::trace;
+
 use crate::{
     ast::{parser::error::SyntaxError, types::Expr},
     lexer::token::{
@@ -11,10 +13,9 @@ use crate::{
 /// start         -> expression ';'
 /// expression    -> (assignment | primary | arithmetic)
 /// assignment    -> identifier '=' primary
-/// primary       -> numbers | string | bool | '(' expression ')'
 /// arithmetic    -> arithmeticMul ( ( "-" | "+" ) arithmetic )*
-/// arithmeticMul -> numbers ( ( "/" | "*" ) arithmeticMul )*
-/// numbers       -> float | int
+/// arithmeticMul -> primary ( ( "/" | "*" ) arithmeticMul )*
+/// primary       -> float | int | string | bool | '(' expression ')'
 pub struct AstParser {
     tokens: Vec<Token>,
     index: usize,
@@ -34,6 +35,7 @@ impl AstParser {
     }
 
     pub fn current(&self) -> Option<&Token> {
+        trace!("current. value: {:?}", self.tokens.get(self.index));
         self.tokens.get(self.index)
     }
 
@@ -46,15 +48,30 @@ impl AstParser {
     }
 
     pub fn advance(&mut self) {
+        trace!("advance. old: {}, new: {}", self.index, self.index + 1);
         self.index += 1;
+    }
+
+    pub fn revert(&mut self) {
+        self.index -= 1;
     }
 
     /// Returns the current value and advances
     pub fn next(&mut self) -> Option<&Token> {
+        trace!(
+            "next. current-value: {:?}, next-value: {:?}, next-index: {}",
+            self.current(),
+            self.tokens.get(self.index + 1),
+            self.index + 1
+        );
         let current = self.tokens.get(self.index);
         self.index += 1;
 
         current
+    }
+
+    pub fn next_cloned(&mut self) -> Option<Token> {
+        self.next().cloned()
     }
 
     pub fn is_match(&mut self, tokens: &[TokenType]) -> Option<Token> {
@@ -79,27 +96,43 @@ impl AstParser {
     pub fn parse(&mut self) -> Result<impl Expr, Vec<SyntaxError>> {
         let mut errors = Vec::<SyntaxError>::new();
 
-        match self.parse_expression() {
+        let expr = match self.parse_expression() {
+            Ok(expr) => Some(expr),
             Err(mut e) => {
                 errors.append(&mut e);
-
-                Err(errors)
+                None
             }
-            Ok(value) => {
-                if let Some(token) = self.next()
-                    && token.r#type != TokenType::Misc(MiscToken::Semicolon)
-                {
+        };
+
+        let semicolon = match self.next() {
+            None => {
+                errors.push(SyntaxError::OutOfTokens);
+                None
+            }
+
+            Some(token) => {
+                if token.r#type != TokenType::Misc(MiscToken::Semicolon) {
                     errors.push(SyntaxError::SyntaxError {
                         line: token.line,
                         column: token.column,
                         msg: "Expected ';'".to_string(),
                     });
-
-                    return Err(errors);
+                    None
+                } else {
+                    Some(())
                 }
-
-                Ok(value)
             }
+        };
+
+        trace!("expr: {:?}", expr);
+        if expr.is_none() | semicolon.is_none() {
+            return Err(errors);
         }
+
+        let expr = expr.unwrap();
+
+        trace!("expr: {:?}", expr);
+
+        Ok(expr)
     }
 }

@@ -6,6 +6,7 @@ use crate::{
     lexer::token::Token,
 };
 
+#[derive(Debug)]
 pub struct Unary {
     pub operator: Token,
     pub right: Box<Expression>,

@@ -6,6 +6,7 @@ use crate::{
     lexer::token::Token,
 };
 
+#[derive(Debug)]
 pub struct Literal {
     pub literal: Token,
 }

@@ -1,51 +1,51 @@
+use tracing::trace;
+
 use crate::{
     ast::{
         parser::{AstParser, error::SyntaxError},
         types::{Expr, Expression},
     },
-    lexer::token::types::{LiteralToken, TokenType},
+    lexer::token::types::{LiteralToken, MiscToken, TokenType},
 };
 
 impl AstParser {
     pub fn parse_expression(&mut self) -> Result<Expression, Vec<SyntaxError>> {
+        trace!("parse_expression");
         let mut errors: Vec<SyntaxError> = Vec::new();
 
-        if let Some(token) = self.current() {
-            if let TokenType::Literal(LiteralToken::Identifier(_)) = &token.r#type {
-                match self.parse_assignment() {
-                    Ok(expr) => return Ok(expr),
-                    Err(e) => {
-                        errors.push(e);
-                        return Err(errors);
-                    }
-                }
+        let expr = match self.current() {
+            None => {
+                errors.push(SyntaxError::OutOfTokens);
+                None
             }
 
-            if let TokenType::Literal(value) = &token.r#type {
-                match value {
-                    LiteralToken::Integer(_) | LiteralToken::Float(_) => {
-                        match self.parse_arithmetic() {
-                            Ok(expr) => return Ok(expr),
-                            Err(mut e) => {
-                                errors.append(&mut e);
-                                return Err(errors);
-                            }
-                        }
+            Some(token) => match token.r#type {
+                TokenType::Literal(LiteralToken::Identifier(_)) => match self.parse_assignment() {
+                    Ok(expr) => Some(expr),
+                    Err(mut e) => {
+                        errors.append(&mut e);
+                        None
                     }
+                },
 
-                    _ => unreachable!(),
-                }
-            }
+                TokenType::Literal(LiteralToken::Integer(_))
+                | TokenType::Literal(LiteralToken::Float(_))
+                | TokenType::Misc(MiscToken::LeftParen) => match self.parse_arithmetic() {
+                    Ok(expr) => Some(expr),
+                    Err(mut e) => {
+                        errors.append(&mut e);
+                        None
+                    }
+                },
+
+                _ => todo!("fuck"),
+            },
+        };
+
+        trace!("expr: {:?}", expr);
+        match expr {
+            None => Err(errors),
+            Some(expr) => Ok(expr),
         }
-
-        errors.push({
-            SyntaxError::SyntaxError {
-                line: 0,
-                column: 0,
-                msg: "Expected identifier or value".to_string(),
-            }
-        });
-
-        Err(errors)
     }
 }

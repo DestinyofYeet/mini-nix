@@ -1,4 +1,4 @@
-use tracing::debug;
+use tracing::{debug, trace};
 
 use crate::{
     ast::{
@@ -13,9 +13,10 @@ use crate::{
 
 impl AstParser {
     pub fn parse_arithmetic(&mut self) -> Result<Expression, Vec<SyntaxError>> {
+        trace!("parse_arithmetic");
         let mut errors = Vec::<SyntaxError>::new();
 
-        let left = match self.parse_numbers() {
+        let left = match self.parse_primary() {
             Ok(expr) => Some(expr),
             Err(mut e) => {
                 errors.append(&mut e);
@@ -48,7 +49,7 @@ impl AstParser {
             }
         };
 
-        let right = match self.parse_numbers() {
+        let right = match self.parse_primary() {
             Ok(expr) => Some(expr),
             Err(mut e) => {
                 errors.append(&mut e);
@@ -56,14 +57,17 @@ impl AstParser {
             }
         };
 
+        trace!(
+            "expr: left: {:?}, operator: {:?}, right: {:?}",
+            left, operator, right
+        );
+
         if left.is_none() | operator.is_none() | right.is_none() {
             return Err(errors);
         }
 
-        Ok(Binary::create(
-            left.unwrap(),
-            operator.unwrap(),
-            right.unwrap(),
-        ))
+        let final_expr = Binary::create(left.unwrap(), operator.unwrap(), right.unwrap());
+
+        Ok(final_expr)
     }
 }
