@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod test {
-    use crate::lexer::{parse_text, tests::definition::LexerTest, token::Token};
+    use crate::lexer::{parse_text, tests::definition::LexerTest};
 
     #[test]
     pub fn skip_single_space() {
@@ -18,7 +18,7 @@ mod test {
 
         let tokens = parse_text(input).unwrap();
 
-        assert_eq!(tokens, vec![Token::get_eof_token(2)])
+        assert_eq!(tokens, vec![])
     }
 
     #[test]
@@ -26,6 +26,6 @@ mod test {
         let input = "#abdef".to_string();
         let tokens = parse_text(input).unwrap();
 
-        assert_eq!(tokens, vec![Token::get_eof_token(1)])
+        assert_eq!(tokens, vec![])
     }
 }

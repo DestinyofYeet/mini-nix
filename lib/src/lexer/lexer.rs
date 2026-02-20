@@ -295,8 +295,6 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
         tokens.push(Token::new(token_type, source_value, line, column));
     }
 
-    tokens.push(Token::get_eof_token(line));
-
     if !errors.is_empty() {
         return Err(errors);
     }

@@ -60,15 +60,12 @@ mod test {
     pub fn string_multiline() {
         let input = "\"a\nb\"".to_string();
         let result = parse_text(input).unwrap();
-        let expected = vec![
-            Token::new(
-                TokenType::Literal(LiteralToken::String("a\nb".to_string())),
-                "\"a\nb\"",
-                2,
-                0,
-            ),
-            Token::get_eof_token(2),
-        ];
+        let expected = vec![Token::new(
+            TokenType::Literal(LiteralToken::String("a\nb".to_string())),
+            "\"a\nb\"",
+            2,
+            0,
+        )];
 
         assert_eq!(result, expected)
     }
