@@ -1,7 +1,10 @@
 use tracing::trace;
 
 use crate::{
-    ast::{parser::error::SyntaxError, types::Expr},
+    ast::{
+        parser::error::SyntaxError,
+        types::{Expr, Expression},
+    },
     lexer::token::{
         Token,
         types::{MiscToken, TokenType},
@@ -93,7 +96,7 @@ impl AstParser {
         returned
     }
 
-    pub fn parse(&mut self) -> Result<impl Expr, Vec<SyntaxError>> {
+    pub fn parse(&mut self) -> Result<Expression, Vec<SyntaxError>> {
         let mut errors = Vec::<SyntaxError>::new();
 
         let expr = match self.parse_expression() {

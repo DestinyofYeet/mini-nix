@@ -3,7 +3,7 @@ use crate::{
     lexer::token::Token,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub struct Binary {
     pub left: Box<Expression>,
     pub operator: Token,

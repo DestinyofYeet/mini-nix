@@ -1,6 +1,6 @@
 use crate::lexer::token::types::TokenType;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Eq)]
 pub struct Token {
     pub r#type: TokenType,
     pub unparsed: String,
