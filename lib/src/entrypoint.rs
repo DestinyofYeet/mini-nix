@@ -23,7 +23,7 @@ impl From<Vec<ParserError>> for Error {
         let mut string = String::new();
 
         for error in value {
-            string += &error.to_string()
+            string += &(error.to_string() + "\n");
         }
 
         Self::Parse(string)
@@ -35,7 +35,7 @@ impl From<Vec<SyntaxError>> for Error {
         let mut string = String::new();
 
         for error in value {
-            string += &error.to_string();
+            string += &(error.to_string() + "\n");
         }
 
         Self::Syntax(string)
