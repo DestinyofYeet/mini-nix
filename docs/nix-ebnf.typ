@@ -28,15 +28,15 @@
       )
 
       #syntax-rule(
-        meta-id: [Attrset],
-        rule-comment: "Expression of an attrset",
+        meta-id: [AssignmentPreamble],
+        rule-comment: "A let .. in or with",
         definition-list: ([
-          #optional-sequence(
-            single-definition[let-in]
-          )
-          #terminal[{]
-          #repeated-sequence(single-definition[Assignment])
-          #terminal[}]
+            #repeated-sequence(qualifier: "some",
+              grouped-sequence(
+                single-definition[let-in],
+                single-definition[with]
+              )
+            ),
         ],)
       )
 
@@ -47,20 +47,68 @@
         definition-list: ([
           #terminal[let]
           #repeated-sequence(
-            single-definition[Assignment]
+            single-definition[AssignmentNoPreamble]
           )
           #terminal[in]
         ],)
       )
 
       #syntax-rule(
-        meta-id: [Assignment],
-        rule-comment: "An assignment",
-        rule-example: code-example(```nix a = 5;```),
+        meta-id: [with],
+        definition-list: ([
+          #terminal[with]
+            
+          #repeated-sequence(qualifier: "some")[ExpressionNoAssignment]
+          #terminal[;]
+        ],)
+      )
+
+      #syntax-rule(
+        meta-id: [Inherit],
+        definition-list: ([
+          #terminal[inherit]
+          #grouped-sequence(
+            repeated-sequence(special-sequence[identifier], qualifier: "some"),
+          )
+          #terminal[;]
+        ],)
+      )
+
+      #syntax-rule(
+        meta-id: [Attrset],
+        rule-comment: "Expression of an attrset",
         definition-list: ([
           #optional-sequence(
-            single-definition[let-in]
+            single-definition[AssignmentPreamble]
           )
+          #terminal[{]
+          #repeated-sequence(qualifier: "some",
+            grouped-sequence(
+              single-definition[Assignment],
+              single-definition[Inherit]
+              ),
+            )
+          #terminal[}]
+        ],)
+      )
+
+      #syntax-rule(
+        meta-id: [Assignment],
+        rule-comment: "An assignment",
+        rule-example: code-example(```nix let x = 5; in a = x;```),
+        definition-list: ([
+          #optional-sequence(
+            single-definition[AssignmentPreamble]
+          )
+          #single-definition[AssignmentNoPreamble]
+        ],)
+      )
+
+      #syntax-rule(
+        meta-id: [AssignmentNoPreamble],
+        rule-comment: "An assignment without the preamble",
+        rule-example: code-example(```nix a = 5;```),
+        definition-list: ([
           #special-sequence[someIdentifier]
           #terminal[=]
           #single-definition[ExpressionNoAssignment]
@@ -78,7 +126,17 @@
             special-sequence[float],
             terminal[true],
             terminal[false],
+            single-definition[List]
           )
+        ],)
+      )
+
+      #syntax-rule(
+        meta-id: [List],
+        definition-list: ([
+          #terminal("[")
+          #single-definition[ExpressionNoAssignment]
+          #terminal("]")
         ],)
       )
 
@@ -87,7 +145,7 @@
         rule-comment: "A function",
         rule-example: [#code-example(```nix input: output```),],
         definition-list: ([
-          #optional-sequence[let-in]
+          #optional-sequence[AssignmentPreamble]
           #special-sequence[InputIdentifier]
           #terminal[:]
           #optional-sequence[let-in]
@@ -99,16 +157,34 @@
       #syntax-rule(
         meta-id: [Arithmetic],
         definition-list: ([
-          #single-definition[ArithmeticOrPrimary]
-          #repeated-sequence[
-            #grouped-sequence(
-              terminal[-],
-              terminal[+],
-              terminal[\*],
-              terminal[/],
-            )
+          #grouped-sequence(
+            [
+            #terminal[(]
             #single-definition[ArithmeticOrPrimary]
-          ]
+            #repeated-sequence[
+              #grouped-sequence(
+                terminal[-],
+                terminal[+],
+                terminal[\*],
+                terminal[/],
+              )
+              #single-definition[ArithmeticOrPrimary]
+            ]
+            #terminal[)]
+            ],
+            [
+            #single-definition[ArithmeticOrPrimary]
+            #repeated-sequence[
+              #grouped-sequence(
+                terminal[-],
+                terminal[+],
+                terminal[\*],
+                terminal[/],
+              )
+              #single-definition[ArithmeticOrPrimary]
+            ]
+            ]
+          )
         ],)
       )
 
