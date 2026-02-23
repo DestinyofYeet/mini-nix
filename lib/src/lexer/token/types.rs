@@ -48,8 +48,6 @@ pub enum MiscToken {
     Comma,
     Dot,
     Semicolon,
-
-    Eof,
 }
 
 /// Tokens related to math

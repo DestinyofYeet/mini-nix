@@ -12,17 +12,12 @@ use crate::{
 };
 
 /// This will take tokens and generate an AST
-/// Grammar (non-exhaustive):
-/// start         -> expression ';'
-/// expression    -> (assignment | primary | arithmetic)
-/// assignment    -> identifier '=' primary
-/// arithmetic    -> arithmeticMul ( ( "-" | "+" ) arithmetic )*
-/// arithmeticMul -> primary ( ( "/" | "*" ) arithmeticMul )*
-/// primary       -> float | int | string | bool | '(' expression ')'
 pub struct AstParser {
     tokens: Vec<Token>,
     index: usize,
 }
+
+pub type ParseResult = Result<Expression, Vec<SyntaxError>>;
 
 #[allow(dead_code)]
 impl AstParser {
@@ -96,6 +91,22 @@ impl AstParser {
         returned
     }
 
+    pub fn craft_error(&self, message: impl ToString) -> SyntaxError {
+        let mut line = 0;
+        let mut column = 0;
+
+        if let Some(current) = self.current() {
+            line = current.line;
+            column = current.column;
+        }
+
+        SyntaxError::SyntaxError {
+            line,
+            column,
+            msg: message.to_string(),
+        }
+    }
+
     pub fn parse(&mut self) -> Result<Expression, Vec<SyntaxError>> {
         let mut errors = Vec::<SyntaxError>::new();
 
@@ -107,35 +118,10 @@ impl AstParser {
             }
         };
 
-        let semicolon = match self.next() {
-            None => {
-                errors.push(SyntaxError::OutOfTokens);
-                None
-            }
-
-            Some(token) => {
-                if token.r#type != TokenType::Misc(MiscToken::Semicolon) {
-                    errors.push(SyntaxError::SyntaxError {
-                        line: token.line,
-                        column: token.column,
-                        msg: "Expected ';'".to_string(),
-                    });
-                    None
-                } else {
-                    Some(())
-                }
-            }
-        };
-
         trace!("expr: {:?}", expr);
-        if expr.is_none() | semicolon.is_none() {
-            return Err(errors);
+        match expr {
+            None => Err(errors),
+            Some(value) => Ok(value),
         }
-
-        let expr = expr.unwrap();
-
-        trace!("expr: {:?}", expr);
-
-        Ok(expr)
     }
 }

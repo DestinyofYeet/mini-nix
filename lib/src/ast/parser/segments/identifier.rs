@@ -3,7 +3,7 @@ use tracing::trace;
 use crate::{
     ast::{
         parser::{AstParser, error::SyntaxError},
-        types::{Expr, Expression, Literal},
+        types::{Expression, Literal},
     },
     lexer::token::types::{LiteralToken, TokenType},
 };

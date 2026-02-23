@@ -9,10 +9,11 @@ use crate::{
 };
 
 impl AstParser {
-    pub fn parse_assignment(&mut self) -> Result<Expression, Vec<SyntaxError>> {
-        trace!("parse_assignment");
+    pub fn parse_assignment_no_preamble(&mut self) -> Result<Expression, Vec<SyntaxError>> {
+        trace!("parse_assignment_no_preamble");
         let mut errors = Vec::<SyntaxError>::new();
-        let expr = match self.parse_identifier() {
+
+        let left = match self.parse_identifier() {
             Ok(value) => Some(value),
             Err(mut e) => {
                 errors.append(&mut e);
@@ -21,7 +22,7 @@ impl AstParser {
             }
         };
 
-        let operator = match self.is_match(&[TokenType::Logic(LogicToken::Equal)]) {
+        let middle = match self.is_match(&[TokenType::Logic(LogicToken::Equal)]) {
             Some(token) => Some(token),
 
             None => {
@@ -40,7 +41,7 @@ impl AstParser {
             }
         };
 
-        let primary = match self.parse_primary() {
+        let right = match self.parse_expression_no_assignment() {
             Ok(value) => Some(value),
             Err(mut e) => {
                 errors.append(&mut e);
@@ -49,11 +50,11 @@ impl AstParser {
             }
         };
 
-        if expr.is_none() | operator.is_none() | primary.is_none() {
+        if left.is_none() | middle.is_none() | right.is_none() {
             return Err(errors);
         }
 
-        let final_expr = Binary::create(expr.unwrap(), operator.unwrap(), primary.unwrap());
+        let final_expr = Binary::create(left.unwrap(), middle.unwrap(), right.unwrap());
 
         trace!("expr: {:?}", final_expr);
 

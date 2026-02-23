@@ -30,4 +30,8 @@ impl Visitor<String> for AstPrinter {
     fn visit_literal(&self, l: &Literal) -> String {
         l.literal.unparsed.clone()
     }
+
+    fn visit_preamble(&self, p: &crate::ast::types::Preamble) -> String {
+        format!("(preamble {})", p.expr.accept(self))
+    }
 }
