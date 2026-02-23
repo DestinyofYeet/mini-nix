@@ -1,4 +1,5 @@
 #import "@preview/nutthead-ebnf:0.3.1": *
+#set page(height: auto)
 
 #context[
   #ebnf[
@@ -193,11 +194,7 @@
         definition-list: ([
           #grouped-sequence(
             single-definition[Primary],
-            grouped-sequence[
-              #terminal[(]
-              #single-definition[Arithmetic]
-              #terminal[)]
-            ]
+            single-definition[Arithmetic]
           )
         ],)
       )
