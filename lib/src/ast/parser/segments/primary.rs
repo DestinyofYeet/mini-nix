@@ -2,26 +2,20 @@ use tracing::trace;
 
 use crate::{
     ast::{
-        parser::{AstParser, error::SyntaxError},
+        parser::{AstParser, ParseResult, error::SyntaxError},
         types::{Expression, Grouping, Literal},
     },
     lexer::token::types::{KeywordToken, LiteralToken, MiscToken, TokenType},
 };
 
 impl AstParser {
-    pub fn parse_primary(&mut self) -> Result<Expression, Vec<SyntaxError>> {
+    pub fn parse_primary(&mut self) -> ParseResult {
         trace!("parse_primary");
-        let mut errors = Vec::<SyntaxError>::new();
 
         let result = match self.next_cloned() {
             None => {
-                errors.push(SyntaxError::SyntaxError {
-                    line: 0,
-                    column: 0,
-                    msg: "Expected token".to_string(),
-                });
-
-                None
+                self.revert();
+                return Err(SyntaxError::OutOfTokens);
             }
 
             Some(token) => match &token.r#type {
@@ -29,53 +23,30 @@ impl AstParser {
                 | TokenType::Keyword(KeywordToken::False)
                 | TokenType::Literal(LiteralToken::Float(_))
                 | TokenType::Literal(LiteralToken::String(_))
-                | TokenType::Literal(LiteralToken::Integer(_)) => {
-                    Some(Literal::create(token.clone()))
-                }
+                | TokenType::Literal(LiteralToken::Integer(_)) => Literal::create(token.clone()),
 
                 TokenType::Misc(MiscToken::LeftParen) => {
-                    let expression = match self.parse_expression() {
-                        Ok(value) => Some(value),
-                        Err(mut e) => {
-                            errors.append(&mut e);
-                            None
-                        }
-                    };
+                    let expression = Grouping::create(self.parse_expression()?);
 
-                    let right_match = self.is_match(&[TokenType::Misc(MiscToken::RightParen)]);
-
-                    if right_match.is_none() {
-                        errors.push(SyntaxError::SyntaxError {
-                            line: token.line,
-                            column: token.column,
-                            msg: "Expected ')'".to_string(),
-                        });
-                        return Err(errors);
+                    if self
+                        .is_match(&[TokenType::Misc(MiscToken::RightParen)])
+                        .is_none()
+                    {
+                        self.revert();
+                        return Err(self.craft_error("Expected ')'"));
                     }
 
-                    expression.map(Grouping::create)
+                    expression
                 }
 
                 _ => {
-                    errors.push(SyntaxError::SyntaxError {
-                        line: token.line,
-                        column: token.column,
-                        msg: "Expected string, float or integer".to_string(),
-                    });
-                    None
+                    self.revert();
+                    return Err(self.craft_error("Expected string, float or integer"));
                 }
             },
         };
 
-        match result {
-            None => {
-                self.revert();
-                Err(errors)
-            }
-            Some(value) => {
-                trace!("expr: {:?}", value);
-                Ok(value)
-            }
-        }
+        trace!("expr: {result:?}");
+        Ok(result)
     }
 }

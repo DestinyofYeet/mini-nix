@@ -1,14 +1,8 @@
 use tracing::trace;
 
 use crate::{
-    ast::{
-        parser::error::SyntaxError,
-        types::{Expr, Expression},
-    },
-    lexer::token::{
-        Token,
-        types::{MiscToken, TokenType},
-    },
+    ast::{parser::error::SyntaxError, types::Expression},
+    lexer::token::{Token, types::TokenType},
 };
 
 /// This will take tokens and generate an AST
@@ -17,7 +11,7 @@ pub struct AstParser {
     index: usize,
 }
 
-pub type ParseResult = Result<Expression, Vec<SyntaxError>>;
+pub type ParseResult = Result<Expression, SyntaxError>;
 
 #[allow(dead_code)]
 impl AstParser {
@@ -33,7 +27,7 @@ impl AstParser {
     }
 
     pub fn current(&self) -> Option<&Token> {
-        trace!("current. value: {:?}", self.tokens.get(self.index));
+        // trace!("current. value: {:?}", self.tokens.get(self.index));
         self.tokens.get(self.index)
     }
 
@@ -46,7 +40,7 @@ impl AstParser {
     }
 
     pub fn advance(&mut self) {
-        trace!("advance. old: {}, new: {}", self.index, self.index + 1);
+        // trace!("advance. old: {}, new: {}", self.index, self.index + 1);
         self.index += 1;
     }
 
@@ -56,12 +50,12 @@ impl AstParser {
 
     /// Returns the current value and advances
     pub fn next(&mut self) -> Option<&Token> {
-        trace!(
-            "next. current-value: {:?}, next-value: {:?}, next-index: {}",
-            self.current(),
-            self.tokens.get(self.index + 1),
-            self.index + 1
-        );
+        // trace!(
+        //     "next. current-value: {:?}, next-value: {:?}, next-index: {}",
+        //     self.current(),
+        //     self.tokens.get(self.index + 1),
+        //     self.index + 1
+        // );
         let current = self.tokens.get(self.index);
         self.index += 1;
 
@@ -107,21 +101,9 @@ impl AstParser {
         }
     }
 
-    pub fn parse(&mut self) -> Result<Expression, Vec<SyntaxError>> {
-        let mut errors = Vec::<SyntaxError>::new();
-
-        let expr = match self.parse_expression() {
-            Ok(expr) => Some(expr),
-            Err(mut e) => {
-                errors.append(&mut e);
-                None
-            }
-        };
-
+    pub fn parse(&mut self) -> ParseResult {
+        let expr = self.parse_expression()?;
         trace!("expr: {:?}", expr);
-        match expr {
-            None => Err(errors),
-            Some(value) => Ok(value),
-        }
+        Ok(expr)
     }
 }

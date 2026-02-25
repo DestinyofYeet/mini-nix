@@ -30,15 +30,9 @@ impl From<Vec<ParserError>> for Error {
     }
 }
 
-impl From<Vec<SyntaxError>> for Error {
-    fn from(value: Vec<SyntaxError>) -> Self {
-        let mut string = String::new();
-
-        for error in value {
-            string += &(error.to_string() + "\n");
-        }
-
-        Self::Syntax(string)
+impl From<SyntaxError> for Error {
+    fn from(value: SyntaxError) -> Self {
+        Self::Syntax(value.to_string())
     }
 }
 

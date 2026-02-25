@@ -136,7 +136,7 @@
         meta-id: [List],
         definition-list: ([
           #terminal("[")
-          #single-definition[ExpressionNoAssignment]
+          #repeated-sequence[ExpressionNoAssignment]
           #terminal("]")
         ],)
       )
@@ -194,7 +194,8 @@
         definition-list: ([
           #grouped-sequence(
             single-definition[Primary],
-            single-definition[Arithmetic]
+            single-definition[Identifier],
+            single-definition[Arithmetic],
           )
         ],)
       )

@@ -1,31 +1,33 @@
 use tracing::trace;
 
 use crate::ast::{
-    parser::{AstParser, error::SyntaxError},
+    parser::{AstParser, ParseResult, error::SyntaxError},
     types::Expression,
 };
 
 impl AstParser {
-    pub fn parse_expression_no_assignment(&mut self) -> Result<Expression, Vec<SyntaxError>> {
+    pub fn parse_expression_no_assignment(&mut self) -> ParseResult {
         trace!("parse_expression_no_assignment");
-        let mut errors = Vec::<SyntaxError>::new();
+        let mut errors: Vec<SyntaxError> = Vec::new();
 
         //parse attrset
         // functions
 
-        let arithmetic = match self.parse_primary() {
-            Ok(value) => Some(value),
-            Err(mut e) => {
-                errors.append(&mut e);
-                None
+        match self.parse_arithmetic() {
+            Ok(value) => {
+                trace!("expr: {value:?}");
+                return Ok(value);
             }
+            Err(e) => errors.push(e),
         };
 
-        if arithmetic.is_none() {
-            errors.push(self.craft_error("Expected arithmetic"));
-            return Err(errors);
-        }
-
-        Ok(arithmetic.unwrap())
+        Err(self.craft_error(format!(
+            "Expected an attrset, function or arithmetic\n{}",
+            errors
+                .iter_mut()
+                .map(|e| e.to_string())
+                .collect::<Vec<String>>()
+                .join("\n")
+        )))
     }
 }

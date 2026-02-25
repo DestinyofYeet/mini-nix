@@ -1,43 +1,37 @@
 use tracing::trace;
 
-use crate::{
-    ast::{
-        parser::{AstParser, error::SyntaxError},
-        types::{Expr, Expression},
-    },
-    lexer::token::types::{LiteralToken, MiscToken, TokenType},
-};
+use crate::ast::parser::{AstParser, ParseResult, error::SyntaxError};
 
 impl AstParser {
-    pub fn parse_expression(&mut self) -> Result<Expression, Vec<SyntaxError>> {
+    pub fn parse_expression(&mut self) -> ParseResult {
         trace!("parse_expression");
         let mut errors: Vec<SyntaxError> = Vec::new();
 
-        let expr_no_assignment = match self.parse_expression_no_assignment() {
-            Ok(value) => Some(value),
-            Err(mut e) => {
-                errors.append(&mut e);
-                None
+        match self.parse_expression_no_assignment() {
+            Ok(value) => {
+                trace!("expr: {value:?}");
+                return Ok(value);
+            }
+            Err(e) => errors.push(e),
+        }
+
+        match self.parse_assignment() {
+            Ok(value) => {
+                trace!("expr: {value:?}");
+                return Ok(value);
+            }
+            Err(e) => {
+                errors.push(e);
             }
         };
 
-        let expr_assignment = match self.parse_assignment() {
-            Ok(value) => Some(value),
-            Err(mut e) => {
-                errors.append(&mut e);
-                None
-            }
-        };
-
-        if let Some(expr) = expr_no_assignment {
-            return Ok(expr);
-        }
-
-        if let Some(expr) = expr_assignment {
-            return Ok(expr);
-        }
-
-        errors.push(self.craft_error("Expected expression or assignment"));
-        Err(errors)
+        Err(self.craft_error(format!(
+            "Expected expression or assignment\n{}",
+            errors
+                .iter()
+                .map(|e| e.to_string())
+                .collect::<Vec<String>>()
+                .join("\n")
+        )))
     }
 }

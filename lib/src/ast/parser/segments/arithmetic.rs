@@ -1,26 +1,31 @@
-use tracing::{debug, trace};
+use tracing::trace;
 
 use crate::{
     ast::{
-        parser::{AstParser, error::SyntaxError},
-        types::{Binary, Expr, Expression, Literal},
+        parser::{AstParser, ParseResult},
+        types::Binary,
     },
-    lexer::token::{
-        Token,
-        types::{MathToken, TokenType},
-    },
+    lexer::token::types::{MathToken, MiscToken, TokenType},
 };
 
 impl AstParser {
-    pub fn parse_arithmetic(&mut self) -> Result<Expression, Vec<SyntaxError>> {
+    pub fn parse_arithmetic(&mut self) -> ParseResult {
         trace!("parse_arithmetic");
-        let mut errors = Vec::<SyntaxError>::new();
 
-        let left = match self.parse_primary() {
-            Ok(expr) => Some(expr),
-            Err(mut e) => {
-                errors.append(&mut e);
-                None
+        let has_left_parent = self
+            .is_match(&[TokenType::Misc(MiscToken::LeftParen)])
+            .is_some();
+
+        let left = match self.parse_arithmetic_or_primary() {
+            Ok(value) => value,
+            Err(e) => {
+                if has_left_parent {
+                    self.revert();
+                }
+
+                self.revert();
+
+                return Err(e);
             }
         };
 
@@ -30,43 +35,40 @@ impl AstParser {
             TokenType::Math(MathToken::Slash),
             TokenType::Math(MathToken::Star),
         ]) {
-            Some(token) => Some(token),
+            Some(token) => token,
             None => {
-                let mut line = 0;
-                let mut column = 0;
+                self.revert();
+                return Err(self.craft_error("Expected operator"));
+            }
+        };
 
-                if let Some(current) = self.current() {
-                    line = current.line;
-                    column = current.column;
+        let right = match self.parse_arithmetic_or_primary() {
+            Ok(value) => value,
+            Err(e) => {
+                if has_left_parent {
+                    self.revert();
                 }
-                errors.push(SyntaxError::SyntaxError {
-                    line,
-                    column,
-                    msg: "Expected operator".to_string(),
-                });
 
-                None
+                self.revert();
+
+                return Err(e);
             }
         };
 
-        let right = match self.parse_primary() {
-            Ok(expr) => Some(expr),
-            Err(mut e) => {
-                errors.append(&mut e);
-                None
-            }
-        };
+        if has_left_parent
+            && self
+                .is_match(&[TokenType::Misc(MiscToken::RightParen)])
+                .is_none()
+        {
+            return Err(self.craft_error("Expected ')'"));
+        }
 
         trace!(
             "expr: left: {:?}, operator: {:?}, right: {:?}",
             left, operator, right
         );
 
-        if left.is_none() | operator.is_none() | right.is_none() {
-            return Err(errors);
-        }
-
-        let final_expr = Binary::create(left.unwrap(), operator.unwrap(), right.unwrap());
+        let final_expr = Binary::create(left, operator, right);
 
         Ok(final_expr)
     }

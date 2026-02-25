@@ -1,4 +1,5 @@
 mod arithmetic;
+mod arithmetic_or_primary;
 mod assignment;
 mod assignment_no_preamble;
 mod assignment_preamble;

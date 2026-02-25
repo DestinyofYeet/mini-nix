@@ -6,8 +6,8 @@ use crate::ast::{
 };
 
 impl AstParser {
-    pub fn parse_assignment_preamble(&mut self) -> Result<PreambleType, Vec<SyntaxError>> {
+    pub fn parse_assignment_preamble(&mut self) -> Result<PreambleType, SyntaxError> {
         trace!("parse_assignment_preamble");
-        Err(vec![self.craft_error("todo")])
+        Err(self.craft_error("todo"))
     }
 }
