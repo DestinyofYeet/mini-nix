@@ -2,8 +2,8 @@ use tracing::trace;
 
 use crate::{
     ast::{
-        parser::{AstParser, ParseResult, error::SyntaxError},
-        types::{Expression, Literal},
+        parser::{AstParser, ParseResult},
+        types::Literal,
     },
     lexer::token::types::{LiteralToken, TokenType},
 };

@@ -1,8 +1,8 @@
 use tracing::trace;
 
 use crate::ast::{
-    parser::{AstParser, ParseResult, error::SyntaxError},
-    types::{Binary, Expression, Preamble},
+    parser::{AstParser, ParseResult},
+    types::Preamble,
 };
 
 impl AstParser {

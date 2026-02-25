@@ -6,5 +6,7 @@ mod assignment_preamble;
 mod expression;
 mod expression_no_assignment;
 mod identifier;
+mod let_in;
 mod primary;
 mod primary_or_identifier;
+mod with;

@@ -1,13 +1,13 @@
-use crate::ast::types::{Binary, Expr, Expression};
+use crate::ast::types::{Expr, Expression};
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct PreambleLetIn {
-    expr: Vec<Binary>,
+    pub expr: Vec<Expression>,
 }
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct PreambleWith {
-    expr: Box<Expression>,
+    pub expr: Box<Expression>,
 }
 
 #[derive(Debug, PartialEq, Eq)]

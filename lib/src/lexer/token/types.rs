@@ -81,6 +81,7 @@ pub enum KeywordToken {
     False,
     Let,
     In,
+    With,
 }
 
 static ALL_KEYWORDS: Lazy<HashMap<&'static str, KeywordToken>> = Lazy::new(|| {
@@ -92,6 +93,7 @@ static ALL_KEYWORDS: Lazy<HashMap<&'static str, KeywordToken>> = Lazy::new(|| {
     map.insert("false", KeywordToken::False);
     map.insert("let", KeywordToken::Let);
     map.insert("in", KeywordToken::In);
+    map.insert("with", KeywordToken::With);
 
     map
 });

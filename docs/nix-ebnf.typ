@@ -47,7 +47,7 @@
         rule-example: code-example(```nix let a = 5; in ...```),
         definition-list: ([
           #terminal[let]
-          #repeated-sequence(
+          #repeated-sequence(qualifier: "some",
             single-definition[AssignmentNoPreamble]
           )
           #terminal[in]
@@ -59,7 +59,11 @@
         definition-list: ([
           #terminal[with]
             
-          #repeated-sequence(qualifier: "some")[ExpressionNoAssignment]
+          #grouped-sequence(
+            
+            single-definition[Attrset],
+            special-sequence[Identifier of Attrset]
+          )
           #terminal[;]
         ],)
       )
@@ -68,8 +72,11 @@
         meta-id: [Inherit],
         definition-list: ([
           #terminal[inherit]
-          #grouped-sequence(
-            repeated-sequence(special-sequence[identifier], qualifier: "some"),
+          #optional-sequence(
+            repeated-sequence(qualifier: "some", grouped-sequence(  
+              special-sequence[Identifier of Attrset],
+              single-definition[Attrset])
+            ), 
           )
           #terminal[;]
         ],)
@@ -154,7 +161,7 @@
           #optional-sequence[AssignmentPreamble]
           #special-sequence[InputIdentifier]
           #terminal[:]
-          #optional-sequence[let-in]
+          #optional-sequence[AssignmentPreamble]
           #single-definition[ExpressionNoAssignment]
           #terminal[;]
         ],)

@@ -1,9 +1,6 @@
 use tracing::trace;
 
-use crate::ast::{
-    parser::{AstParser, ParseResult, error::SyntaxError},
-    types::Expression,
-};
+use crate::ast::parser::{AstParser, ParseResult, error::SyntaxError};
 
 impl AstParser {
     pub fn parse_expression_no_assignment(&mut self) -> ParseResult {
@@ -22,7 +19,7 @@ impl AstParser {
         };
 
         Err(self.craft_error(format!(
-            "Expected an attrset, function or arithmetic\n{}",
+            "Expected an attrset, function or arithmetic\n\t{}",
             errors
                 .iter_mut()
                 .map(|e| e.to_string())

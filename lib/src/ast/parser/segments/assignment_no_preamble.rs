@@ -2,10 +2,10 @@ use tracing::trace;
 
 use crate::{
     ast::{
-        parser::{AstParser, ParseResult, error::SyntaxError},
-        types::{Binary, Expression},
+        parser::{AstParser, ParseResult},
+        types::Binary,
     },
-    lexer::token::types::{LogicToken, TokenType},
+    lexer::token::types::{LogicToken, MiscToken, TokenType},
 };
 
 impl AstParser {
@@ -25,6 +25,13 @@ impl AstParser {
         let right = self.parse_expression_no_assignment()?;
 
         let final_expr = Binary::create(left, middle, right);
+
+        if self
+            .is_match(&[TokenType::Misc(MiscToken::Semicolon)])
+            .is_none()
+        {
+            return Err(self.craft_error("Expected ';'"));
+        }
 
         trace!("expr: {:?}", final_expr);
 

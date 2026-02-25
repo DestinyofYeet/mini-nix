@@ -5,7 +5,7 @@ use crate::{
         parser::{AstParser, ParseResult, error::SyntaxError},
         types::Binary,
     },
-    lexer::token::types::{MathToken, MiscToken, TokenType},
+    lexer::token::types::{MathToken, TokenType},
 };
 
 impl AstParser {

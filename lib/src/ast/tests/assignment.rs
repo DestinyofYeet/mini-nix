@@ -9,8 +9,8 @@ mod test {
     };
 
     #[test]
-    pub fn one_plus_one() {
-        let tokens = parse_text("1 + 1;".to_string()).unwrap();
+    pub fn assignment() {
+        let tokens = parse_text("a = 2;".to_string()).unwrap();
 
         let mut parser = AstParser::new(tokens.clone());
 
@@ -27,8 +27,8 @@ mod test {
     }
 
     #[test]
-    pub fn one_plue_one_plus_one() {
-        let tokens = parse_text("1 - 1 + 1".to_string()).unwrap();
+    pub fn assignment_and_arithmetic() {
+        let tokens = parse_text("a = 1+2+3;".to_string()).unwrap();
 
         let mut parser = AstParser::new(tokens.clone());
 
@@ -37,13 +37,17 @@ mod test {
         assert_eq!(
             ast,
             Binary::create(
+                Literal::create(tokens[0].clone()),
+                tokens[1].clone(),
                 Binary::create(
-                    Literal::create(tokens[0].clone()),
-                    tokens[1].clone(),
-                    Literal::create(tokens[2].clone())
-                ),
-                tokens[3].clone(),
-                Literal::create(tokens[4].clone())
+                    Binary::create(
+                        Literal::create(tokens[2].clone()),
+                        tokens[3].clone(),
+                        Literal::create(tokens[4].clone())
+                    ),
+                    tokens[5].clone(),
+                    Literal::create(tokens[6].clone())
+                )
             )
         )
     }
