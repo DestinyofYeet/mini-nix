@@ -163,16 +163,29 @@
       #syntax-rule(
         meta-id: [Arithmetic],
         definition-list: ([
-            #single-definition[PrimaryOrIdentifier]
+            #single-definition[ArithmeticMul]
             #repeated-sequence[
               #grouped-sequence(
                 terminal[-],
                 terminal[+],
-                terminal[\*],
-                terminal[/],
               )
-              #single-definition[PrimaryOrIdentifier]
+              #single-definition[ArithmeticMul]
             ]
+        ],)
+      )
+
+      #syntax-rule(
+        meta-id: [ArithmeticMul],
+        definition-list: ([
+          #single-definition[PrimaryOrIdentifier]
+          #repeated-sequence[
+            #grouped-sequence(
+              terminal[\*],
+              terminal[/]
+            )
+            #single-definition[PrimaryOrIdentifier]
+          ]
+          
         ],)
       )
 

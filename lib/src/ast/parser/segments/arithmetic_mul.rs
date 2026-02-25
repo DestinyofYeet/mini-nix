@@ -5,16 +5,15 @@ use crate::{
         parser::{AstParser, ParseResult, error::SyntaxError},
         types::Binary,
     },
-    lexer::token::types::{MathToken, MiscToken, TokenType},
+    lexer::token::types::{MathToken, TokenType},
 };
 
 impl AstParser {
-    pub fn parse_arithmetic(&mut self) -> ParseResult {
-        trace!("parse_arithmetic");
-
+    pub fn parse_arithmetic_mul(&mut self) -> ParseResult {
+        trace!("parse_arithmetic_mul");
         let mut errors: Vec<SyntaxError> = Vec::new();
 
-        let left = match self.parse_arithmetic_mul() {
+        let left = match self.parse_primary_or_identifier() {
             Ok(value) => value,
             Err(e) => {
                 return Err(e);
@@ -25,8 +24,8 @@ impl AstParser {
 
         loop {
             let operator = match self.is_match(&[
-                TokenType::Math(MathToken::Minus),
-                TokenType::Math(MathToken::Plus),
+                TokenType::Math(MathToken::Slash),
+                TokenType::Math(MathToken::Star),
             ]) {
                 Some(token) => Some(token),
                 None => {
@@ -35,7 +34,7 @@ impl AstParser {
                 }
             };
 
-            let right = match self.parse_arithmetic_mul() {
+            let right = match self.parse_primary_or_identifier() {
                 Ok(value) => Some(value),
                 Err(e) => {
                     errors.push(e);
