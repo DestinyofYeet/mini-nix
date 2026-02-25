@@ -2,7 +2,7 @@ use tracing::trace;
 
 use crate::{
     ast::{
-        parser::{AstParser, ParseResult},
+        parser::{AstParser, ParseResult, error::SyntaxError},
         types::Binary,
     },
     lexer::token::types::{MathToken, MiscToken, TokenType},
@@ -12,19 +12,11 @@ impl AstParser {
     pub fn parse_arithmetic(&mut self) -> ParseResult {
         trace!("parse_arithmetic");
 
-        let has_left_parent = self
-            .is_match(&[TokenType::Misc(MiscToken::LeftParen)])
-            .is_some();
+        let mut errors: Vec<SyntaxError> = Vec::new();
 
         let left = match self.parse_arithmetic_or_primary() {
             Ok(value) => value,
             Err(e) => {
-                if has_left_parent {
-                    self.revert();
-                }
-
-                self.revert();
-
                 return Err(e);
             }
         };
@@ -35,38 +27,50 @@ impl AstParser {
             TokenType::Math(MathToken::Slash),
             TokenType::Math(MathToken::Star),
         ]) {
-            Some(token) => token,
+            Some(token) => Some(token),
             None => {
                 self.revert();
-                return Err(self.craft_error("Expected operator"));
+                errors.push(self.craft_error("Expected operator"));
+                None
             }
         };
 
         let right = match self.parse_arithmetic_or_primary() {
-            Ok(value) => value,
+            Ok(value) => Some(value),
             Err(e) => {
-                if has_left_parent {
-                    self.revert();
-                }
-
-                self.revert();
-
-                return Err(e);
+                errors.push(e);
+                None
             }
         };
-
-        if has_left_parent
-            && self
-                .is_match(&[TokenType::Misc(MiscToken::RightParen)])
-                .is_none()
-        {
-            return Err(self.craft_error("Expected ')'"));
-        }
 
         trace!(
             "expr: left: {:?}, operator: {:?}, right: {:?}",
             left, operator, right
         );
+
+        if operator.is_none() && right.is_none() {
+            return Ok(left);
+        }
+
+        let error_fmt = errors
+            .iter_mut()
+            .map(|e| e.to_string())
+            .collect::<Vec<String>>()
+            .join("\n");
+
+        let operator = match operator {
+            Some(value) => value,
+            None => {
+                return Err(self.craft_error(format!("Expected operator: \n{}", error_fmt)));
+            }
+        };
+
+        let right = match right {
+            Some(value) => value,
+            None => {
+                return Err(self.craft_error(format!("Expected right side: \n{}", error_fmt)));
+            }
+        };
 
         let final_expr = Binary::create(left, operator, right);
 

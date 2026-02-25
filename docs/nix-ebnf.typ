@@ -127,7 +127,12 @@
             special-sequence[float],
             terminal[true],
             terminal[false],
-            single-definition[List]
+            single-definition[List],
+            grouped-sequence[
+              #terminal[(]
+              #single-definition[ExpressionNoAssignment]
+              #terminal[)]
+            ]
           )
         ],)
       )
@@ -158,10 +163,7 @@
       #syntax-rule(
         meta-id: [Arithmetic],
         definition-list: ([
-          #grouped-sequence(
-            [
-            #terminal[(]
-            #single-definition[ArithmeticOrPrimary]
+            #single-definition[PrimaryOrIdentifier]
             #repeated-sequence[
               #grouped-sequence(
                 terminal[-],
@@ -169,33 +171,17 @@
                 terminal[\*],
                 terminal[/],
               )
-              #single-definition[ArithmeticOrPrimary]
+              #single-definition[PrimaryOrIdentifier]
             ]
-            #terminal[)]
-            ],
-            [
-            #single-definition[ArithmeticOrPrimary]
-            #repeated-sequence[
-              #grouped-sequence(
-                terminal[-],
-                terminal[+],
-                terminal[\*],
-                terminal[/],
-              )
-              #single-definition[ArithmeticOrPrimary]
-            ]
-            ]
-          )
         ],)
       )
 
       #syntax-rule(
-        meta-id: [ArithmeticOrPrimary],
+        meta-id: [PrimaryOrIdentifier],
         definition-list: ([
           #grouped-sequence(
             single-definition[Primary],
             single-definition[Identifier],
-            single-definition[Arithmetic],
           )
         ],)
       )

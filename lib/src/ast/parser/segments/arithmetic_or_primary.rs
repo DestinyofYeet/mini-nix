@@ -16,11 +16,6 @@ impl AstParser {
             return Ok(value);
         }
 
-        if let Ok(value) = self.parse_arithmetic() {
-            trace!("expr: {value:?}");
-            return Ok(value);
-        }
-
         Err(self.craft_error("Expected primary, arithemtic or identifier"))
     }
 }

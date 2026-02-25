@@ -26,7 +26,7 @@ impl AstParser {
                 | TokenType::Literal(LiteralToken::Integer(_)) => Literal::create(token.clone()),
 
                 TokenType::Misc(MiscToken::LeftParen) => {
-                    let expression = Grouping::create(self.parse_expression()?);
+                    let expression = Grouping::create(self.parse_expression_no_assignment()?);
 
                     if self
                         .is_match(&[TokenType::Misc(MiscToken::RightParen)])
