@@ -48,7 +48,11 @@
         definition-list: ([
           #terminal[let]
           #repeated-sequence(qualifier: "some",
-            single-definition[AssignmentNoPreamble]
+            grouped-sequence(
+              
+              single-definition[AssignmentNoPreamble],
+              single-definition[Inherit]
+            )
           )
           #terminal[in]
         ],)
@@ -73,11 +77,12 @@
         definition-list: ([
           #terminal[inherit]
           #optional-sequence(
-            repeated-sequence(qualifier: "some", grouped-sequence(  
-              special-sequence[Identifier of Attrset],
-              single-definition[Attrset])
-            ), 
+            special-sequence[Identifier of Attrset],
+            single-definition[Attrset]
           )
+          #repeated-sequence(qualifier: "some")[
+            #special-sequence[Identifier]
+          ]
           #terminal[;]
         ],)
       )
