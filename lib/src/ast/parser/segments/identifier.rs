@@ -2,7 +2,7 @@ use tracing::trace;
 
 use crate::{
     ast::{
-        parser::{AstParser, ParseResult},
+        parser::{AstParser, ParseResult, error::SyntaxError},
         types::Literal,
     },
     lexer::token::types::{LiteralToken, TokenType},
@@ -23,7 +23,7 @@ impl AstParser {
             },
             None => {
                 self.revert();
-                return Err(self.craft_error("Expected Identifier"));
+                return Err(SyntaxError::OutOfTokens);
             }
         };
 

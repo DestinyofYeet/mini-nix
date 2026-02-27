@@ -14,6 +14,8 @@ impl AstParser {
 
         let preamble = self.parse_preamble().ok();
 
+        let index_post_preamble = self.index;
+
         match self.parse_expression_no_assignment() {
             Ok(value) => {
                 trace!("expr: {value:?}");
@@ -21,7 +23,6 @@ impl AstParser {
                     final_expr = Some(value)
                 } else {
                     errors.push(self.craft_error("Tokens left :("));
-                    self.index = 0;
                 }
             }
             Err(e) => {
@@ -30,6 +31,7 @@ impl AstParser {
         }
 
         if final_expr.is_none() {
+            self.index = index_post_preamble;
             match self.parse_assignment() {
                 Ok(value) => {
                     trace!("expr: {value:?}");
