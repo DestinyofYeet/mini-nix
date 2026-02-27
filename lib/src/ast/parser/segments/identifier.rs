@@ -27,6 +27,8 @@ impl AstParser {
             }
         };
 
+        trace!("expr: {result:?}");
+
         Ok(result)
     }
 }

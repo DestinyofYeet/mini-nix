@@ -16,6 +16,6 @@ impl AstParser {
             return Ok(value);
         }
 
-        Err(self.craft_error("Expected primary, arithemtic or identifier"))
+        Err(self.craft_error("Expected primary, identifier"))
     }
 }

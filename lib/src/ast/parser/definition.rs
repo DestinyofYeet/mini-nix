@@ -7,8 +7,8 @@ use crate::{
 
 /// This will take tokens and generate an AST
 pub struct AstParser {
-    tokens: Vec<Token>,
-    index: usize,
+    pub tokens: Vec<Token>,
+    pub index: usize,
 }
 
 pub type ParseResult = Result<Expression, SyntaxError>;
@@ -46,6 +46,10 @@ impl AstParser {
 
     pub fn revert(&mut self) {
         self.index -= 1;
+    }
+
+    pub fn is_done(&self) -> bool {
+        self.index >= self.tokens.len()
     }
 
     /// Returns the current value and advances
