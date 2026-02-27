@@ -9,6 +9,7 @@
         rule-comment: "The start of a nix expression",
         definition-list: ([
           
+          #optional-sequence[Preamble]
           #grouped-sequence(
             single-definition[ExpressionNoAssignment],
             single-definition[Assignment],
@@ -29,7 +30,7 @@
       )
 
       #syntax-rule(
-        meta-id: [AssignmentPreamble],
+        meta-id: [Preamble],
         rule-comment: "A let .. in or with",
         definition-list: ([
             #repeated-sequence(qualifier: "some",
@@ -50,7 +51,7 @@
           #repeated-sequence(qualifier: "some",
             grouped-sequence(
               
-              single-definition[AssignmentNoPreamble],
+              single-definition[Assignment],
               single-definition[Inherit]
             )
           )
@@ -91,9 +92,6 @@
         meta-id: [Attrset],
         rule-comment: "Expression of an attrset",
         definition-list: ([
-          #optional-sequence(
-            single-definition[AssignmentPreamble]
-          )
           #terminal[{]
           #repeated-sequence(qualifier: "some",
             grouped-sequence(
@@ -107,18 +105,6 @@
 
       #syntax-rule(
         meta-id: [Assignment],
-        rule-comment: "An assignment",
-        rule-example: code-example(```nix let x = 5; in a = x;```),
-        definition-list: ([
-          #optional-sequence(
-            single-definition[AssignmentPreamble]
-          )
-          #single-definition[AssignmentNoPreamble]
-        ],)
-      )
-
-      #syntax-rule(
-        meta-id: [AssignmentNoPreamble],
         rule-comment: "An assignment without the preamble",
         rule-example: code-example(```nix a = 5;```),
         definition-list: ([
@@ -163,10 +149,9 @@
         rule-comment: "A function",
         rule-example: [#code-example(```nix input: output```),],
         definition-list: ([
-          #optional-sequence[AssignmentPreamble]
           #special-sequence[InputIdentifier]
           #terminal[:]
-          #optional-sequence[AssignmentPreamble]
+          #optional-sequence[Preamble]
           #single-definition[ExpressionNoAssignment]
           #terminal[;]
         ],)

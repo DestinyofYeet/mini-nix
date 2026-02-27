@@ -9,7 +9,7 @@ use crate::ast::{
 impl AstParser {
     // This should be able to parse multiple preambles, but it can't currently
     // because the PreambleType can't hold that information
-    pub fn parse_assignment_preamble(&mut self) -> Result<PreambleType, SyntaxError> {
+    pub fn parse_preamble(&mut self) -> Result<PreambleType, SyntaxError> {
         trace!("parse_assignment_preamble");
 
         let mut errors: Vec<SyntaxError> = Vec::new();

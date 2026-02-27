@@ -18,7 +18,7 @@ impl AstParser {
 
         let mut assignments: Vec<Expression> = Vec::new();
 
-        while let Ok(value) = self.parse_assignment_no_preamble() {
+        while let Ok(value) = self.parse_assignment() {
             assignments.push(value);
         }
 
