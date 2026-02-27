@@ -10,7 +10,7 @@ mod test {
 
     #[test]
     pub fn one_plus_one() {
-        let tokens = parse_text("1 + 1;".to_string()).unwrap();
+        let tokens = parse_text("1 + 1".to_string()).unwrap();
 
         let mut parser = AstParser::new(tokens.clone());
 
