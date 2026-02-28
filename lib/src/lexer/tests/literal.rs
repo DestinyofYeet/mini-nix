@@ -88,4 +88,12 @@ mod test {
             }
         )
     }
+
+    #[test]
+    pub fn literal_with_underscore() {
+        LexerTest::expect_single_token(
+            "abc_def",
+            TokenType::Literal(LiteralToken::Identifier("abc_def".to_string())),
+        );
+    }
 }

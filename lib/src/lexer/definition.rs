@@ -205,7 +205,7 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
                 }
             }
 
-            'a'..='z' | 'A'..='Z' => {
+            'a'..='z' | '_' | 'A'..='Z' => {
                 let mut index = char_index;
                 loop {
                     let (i, next) = match iterator.peek() {
@@ -213,7 +213,7 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
                         Some(value) => value,
                     };
 
-                    if next.is_ascii_alphanumeric() {
+                    if next.is_ascii_alphanumeric() || *next == '_' {
                         index = *i;
                         iterator.next();
                     } else {
