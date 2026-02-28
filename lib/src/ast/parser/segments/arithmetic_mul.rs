@@ -1,4 +1,4 @@
-use tracing::trace;
+use tracing::{debug, trace};
 
 use crate::{
     ast::{
@@ -13,7 +13,7 @@ impl AstParser {
         trace!("parse_arithmetic_mul");
         let mut errors: Vec<SyntaxError> = Vec::new();
 
-        let left = match self.parse_primary_or_identifier() {
+        let left = match self.parse_unary() {
             Ok(value) => value,
             Err(e) => {
                 return Err(e);
@@ -34,7 +34,8 @@ impl AstParser {
                 }
             };
 
-            let right = match self.parse_primary_or_identifier() {
+            let index_pre_unary = self.index;
+            let right = match self.parse_unary() {
                 Ok(value) => Some(value),
                 Err(e) => {
                     errors.push(e);
@@ -48,6 +49,14 @@ impl AstParser {
             );
 
             if operator.is_none() && right.is_none() {
+                // we are done, nothing to the right found
+                return Ok(return_expr);
+            }
+
+            if operator.is_none() && right.is_some() {
+                // the unary matched the operator greedily
+                // discard the unary
+                self.index = index_pre_unary;
                 return Ok(return_expr);
             }
 

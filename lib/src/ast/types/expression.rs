@@ -12,7 +12,7 @@ pub trait Expr {
     fn accept<TY, T: Visitor<TY>>(&self, visitor: &T) -> TY;
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum Expression {
     Binary(Binary),
     Grouping(Grouping),

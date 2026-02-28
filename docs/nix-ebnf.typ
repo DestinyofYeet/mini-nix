@@ -174,15 +174,32 @@
       #syntax-rule(
         meta-id: [ArithmeticMul],
         definition-list: ([
-          #single-definition[PrimaryOrIdentifier]
+          #single-definition[Unary]
           #repeated-sequence[
             #grouped-sequence(
               terminal[\*],
               terminal[/]
             )
-            #single-definition[PrimaryOrIdentifier]
+            #single-definition[Unary]
           ]
           
+        ],)
+      )
+
+      #syntax-rule(
+        meta-id: [Unary],
+        definition-list: ([
+          #grouped-sequence(
+            
+            single-definition[            
+                #grouped-sequence(
+                  terminal[!],
+                  terminal[-],
+                )
+                #single-definition[Unary]
+              ],
+            single-definition[PrimaryOrIdentifier]
+            )
         ],)
       )
 
@@ -195,6 +212,7 @@
           )
         ],)
       )
+
     ]
   ]
 ]

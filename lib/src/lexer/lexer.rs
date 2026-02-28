@@ -54,7 +54,6 @@ pub fn parse_text(source: String) -> Result<Vec<Token>, Vec<ParserError>> {
             }
 
             ' ' => {
-                trace!("Skipped space");
                 continue;
             }
 

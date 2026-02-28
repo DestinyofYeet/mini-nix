@@ -1,22 +1,22 @@
 use crate::ast::types::{Expr, Expression};
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct PreambleLetIn {
     pub expr: Vec<Expression>,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct PreambleWith {
     pub expr: Box<Expression>,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum PreambleType {
     LetIn(PreambleLetIn),
     With(PreambleWith),
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Preamble {
     pub kind: PreambleType,
     pub expr: Box<Expression>,

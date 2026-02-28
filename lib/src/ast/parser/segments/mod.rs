@@ -8,4 +8,5 @@ mod let_in;
 mod preamble;
 mod primary;
 mod primary_or_identifier;
+mod unary;
 mod with;
