@@ -57,7 +57,7 @@ mod test {
     }
 
     #[test]
-    pub fn with_primary() {
+    pub fn with_identifier() {
         let tokens = parse_text("with a; b".to_string()).unwrap();
 
         let mut parser = AstParser::new(tokens.clone());
@@ -70,6 +70,28 @@ mod test {
                     expr: Box::new(Literal::create(tokens[1].clone()))
                 }),
                 Literal::create(tokens[3].clone())
+            )
+        )
+    }
+
+    #[test]
+    pub fn with_primary() {
+        let tokens = parse_text("with a; 1 + b".to_string()).unwrap();
+
+        let mut parser = AstParser::new(tokens.clone());
+        let ast = parser.parse().unwrap();
+
+        assert_eq!(
+            ast,
+            Preamble::create(
+                PreambleType::With(PreambleWith {
+                    expr: Box::new(Literal::create(tokens[1].clone()))
+                }),
+                Binary::create(
+                    Literal::create(tokens[3].clone()),
+                    tokens[4].clone(),
+                    Literal::create(tokens[5].clone())
+                )
             )
         )
     }
