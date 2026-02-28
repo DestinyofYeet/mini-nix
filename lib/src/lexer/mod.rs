@@ -1,8 +1,8 @@
+pub(crate) mod definition;
 pub mod error;
-pub(crate) mod lexer;
 #[cfg(test)]
 mod tests;
 
 pub(crate) mod token;
 
-pub(crate) use lexer::*;
+pub(crate) use definition::*;

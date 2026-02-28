@@ -3,9 +3,7 @@ mod test {
     use crate::{
         ast::{
             parser::AstParser,
-            types::{
-                Binary, Expression, Literal, Preamble, PreambleLetIn, PreambleType, PreambleWith,
-            },
+            types::{Binary, Literal, Preamble, PreambleLetIn, PreambleType, PreambleWith},
         },
         lexer::parse_text,
     };

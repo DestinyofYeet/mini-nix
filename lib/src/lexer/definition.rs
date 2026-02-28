@@ -1,5 +1,3 @@
-use tracing::trace;
-
 use crate::lexer::{
     error::ParserError,
     token::{

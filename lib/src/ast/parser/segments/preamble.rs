@@ -3,7 +3,7 @@ use tracing::trace;
 
 use crate::ast::{
     parser::{AstParser, error::SyntaxError},
-    types::{Expression, PreambleType},
+    types::PreambleType,
 };
 
 impl AstParser {
