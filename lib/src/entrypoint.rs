@@ -1,5 +1,5 @@
 use thiserror::Error;
-use tracing::trace;
+use tracing::{debug, trace};
 
 use crate::{
     ast::{
@@ -45,7 +45,7 @@ pub fn run(source: String) -> Result<(), Error> {
     let expr = parser.parse()?;
 
     let result = AstPrinter::print(expr);
-    trace!("ast: {result}");
+    debug!("ast: {result}");
 
     Ok(())
 }
