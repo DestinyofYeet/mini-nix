@@ -8,7 +8,7 @@ use crate::lexer::{
 
 pub fn parse_text(source: &str) -> Result<Vec<Token>, Vec<ParserError>> {
     let mut line: usize = 1;
-    let mut column: usize = 1;
+    let mut column: usize = 0;
 
     let mut tokens: Vec<Token> = Vec::new();
 
@@ -42,7 +42,7 @@ pub fn parse_text(source: &str) -> Result<Vec<Token>, Vec<ParserError>> {
         column += 1;
         let mut advance_line = || {
             line += 1;
-            column = 1;
+            column = 0;
         };
 
         let token_type = match char {

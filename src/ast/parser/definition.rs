@@ -68,19 +68,15 @@ impl AstParser {
 
     /// Returns the current value and advances
     pub fn next(&mut self) -> Option<&Token> {
-        // trace!(
-        //     "next. current-value: {:?}, next-value: {:?}, next-index: {}",
-        //     self.current(),
-        //     self.tokens.get(self.index + 1),
-        //     self.index + 1
-        // );
         let current = self.tokens.get(self.index_usize());
+        trace!("next: idx: {} | {current:?}", self.index);
         self.index += 1;
 
         current
     }
 
     fn current(&self) -> Option<&Token> {
+        trace!("current: {}", self.index);
         self.tokens.get(self.index_usize())
     }
 
@@ -103,6 +99,12 @@ impl AstParser {
         returned
     }
 
+    #[inline(always)]
+    pub fn set_index(&mut self, idx: u64) {
+        trace!("set_index: {} -> {}", self.index, idx);
+        self.index = idx
+    }
+
     pub fn craft_error(
         &self,
         message: impl Into<String>,
@@ -118,24 +120,11 @@ impl AstParser {
 
         let errors = errors.into();
 
-        let mut message = message.into();
-
-        if let Some(errors) = errors
-            && !errors.is_empty()
-        {
-            message = format!(
-                "{message}\n{}\n",
-                errors
-                    .iter()
-                    .map(|err| format!("Caused by: {err}"))
-                    .join("\n")
-            )
-        }
-
         AstError::SyntaxError {
             line,
             column,
-            msg: message,
+            msg: message.into(),
+            error: errors.unwrap_or(Vec::new()),
         }
     }
 

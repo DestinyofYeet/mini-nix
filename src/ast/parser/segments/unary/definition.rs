@@ -23,7 +23,7 @@ impl AstParser {
                     Err(errors) => {
                         // Revert for match above
                         self.revert();
-                        self.craft_error("Failed to parse unary:", errors)
+                        self.craft_error("Failed to parse unary (right):", errors)
                     }
                 }
             } else {
@@ -31,7 +31,9 @@ impl AstParser {
 
                 match primary {
                     Ok(value) => return Ok(value),
-                    Err(errors) => self.craft_error("Failed to parse primary", errors),
+                    Err(errors) => {
+                        self.craft_error("Failed to parse primary_or_identifier:", errors)
+                    }
                 }
             }
         };
