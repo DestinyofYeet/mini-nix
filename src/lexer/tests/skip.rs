@@ -1,0 +1,31 @@
+#[cfg(test)]
+mod test {
+    use crate::lexer::{parse_text, tests::definition::LexerTest};
+
+    #[test]
+    pub fn skip_single_space() {
+        LexerTest::single_line_test(" ", vec![]);
+    }
+
+    #[test]
+    pub fn skip_multi_space() {
+        LexerTest::single_line_test("   ", vec![]);
+    }
+
+    #[test]
+    pub fn skip_newline() {
+        let input = "\n";
+
+        let tokens = parse_text(input).unwrap();
+
+        assert_eq!(tokens, vec![])
+    }
+
+    #[test]
+    pub fn skip_comments() {
+        let input = "#abdef";
+        let tokens = parse_text(input).unwrap();
+
+        assert_eq!(tokens, vec![])
+    }
+}

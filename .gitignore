@@ -29,3 +29,4 @@ result-*
 # Added by cargo
 
 /target
+.cargo/

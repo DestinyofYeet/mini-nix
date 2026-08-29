@@ -222,21 +222,21 @@ checksum = "f8ca58f447f06ed17d5fc4043ce1b10dd205e060fb3ce5b979b8ed8e59ff3f79"
 name = "mini-nix"
 version = "0.1.0"
 dependencies = [
- "anyhow",
- "clap",
- "mini-nix-lib",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "mini-nix-lib"
-version = "0.1.0"
-dependencies = [
  "itertools",
  "once_cell",
  "thiserror",
  "tracing",
+]
+
+[[package]]
+name = "mini-nix-cli"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "mini-nix",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
