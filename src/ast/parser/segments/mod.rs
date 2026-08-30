@@ -1,7 +1,11 @@
 pub mod arithmetic;
 mod arithmetic_mul;
+mod assignment;
 mod expression;
 mod expression_no_assignment;
+mod function;
+mod identifier;
+mod list;
 pub mod primary;
 mod primary_or_identifier;
 mod unary;

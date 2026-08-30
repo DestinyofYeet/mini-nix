@@ -19,9 +19,9 @@ mod test {
         assert_eq!(
             ast,
             Binary::new(
-                Literal::new(tokens[0].clone()),
+                Literal::new_expr(tokens[0].clone()),
                 tokens[1].clone(),
-                Literal::new(tokens[2].clone())
+                Literal::new_expr(tokens[2].clone())
             )
         )
     }
@@ -38,12 +38,12 @@ mod test {
             ast,
             Binary::new(
                 Binary::new(
-                    Literal::new(tokens[0].clone()),
+                    Literal::new_expr(tokens[0].clone()),
                     tokens[1].clone(),
-                    Literal::new(tokens[2].clone())
+                    Literal::new_expr(tokens[2].clone())
                 ),
                 tokens[3].clone(),
-                Literal::new(tokens[4].clone())
+                Literal::new_expr(tokens[4].clone())
             )
         )
     }

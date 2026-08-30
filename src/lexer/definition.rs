@@ -1,3 +1,7 @@
+use std::time::Instant;
+
+use tracing::debug;
+
 use crate::lexer::{
     error::ParserError,
     token::{
@@ -7,6 +11,8 @@ use crate::lexer::{
 };
 
 pub fn parse_text(source: &str) -> Result<Vec<Token>, Vec<ParserError>> {
+    let start = Instant::now();
+
     let mut line: usize = 1;
     let mut column: usize = 0;
 
@@ -81,8 +87,18 @@ pub fn parse_text(source: &str) -> Result<Vec<Token>, Vec<ParserError>> {
             ',' => TokenType::Misc(MiscToken::Comma),
             '.' => TokenType::Misc(MiscToken::Dot),
             ';' => TokenType::Misc(MiscToken::Semicolon),
+            ':' => TokenType::Misc(MiscToken::Colon),
 
-            '+' => TokenType::Math(MathToken::Plus),
+            '+' => {
+                if match_next("+", char_index) {
+                    token_width = 2;
+                    iterator.next();
+
+                    TokenType::Misc(MiscToken::DoublePlus)
+                } else {
+                    TokenType::Math(MathToken::Plus)
+                }
+            }
             '-' => TokenType::Math(MathToken::Minus),
             '/' => {
                 if match_next("/", char_index) {
@@ -301,6 +317,13 @@ pub fn parse_text(source: &str) -> Result<Vec<Token>, Vec<ParserError>> {
 
         tokens.push(Token::new(token_type, source_value, line, column));
     }
+
+    let end = Instant::now();
+
+    debug!(
+        "Scanned input in {:.2}ms",
+        ((end - start).as_nanos() as f64 / 1_000_000.0)
+    );
 
     if !errors.is_empty() {
         return Err(errors);

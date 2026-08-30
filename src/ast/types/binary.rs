@@ -11,6 +11,7 @@ pub struct Binary {
 }
 
 impl Binary {
+    #[allow(clippy::new_ret_no_self)]
     pub fn new(left: Expression, operator: Token, right: Expression) -> Expression {
         let binary = Self {
             left: Box::new(left),

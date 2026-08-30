@@ -18,15 +18,15 @@ mod test {
 
         assert_eq!(
             ast,
-            Preamble::create(
+            Preamble::new(
                 PreambleType::LetIn(PreambleLetIn {
                     expr: vec![Binary::new(
-                        Literal::new(tokens[1].clone()),
+                        Literal::new_expr(tokens[1].clone()),
                         tokens[2].clone(),
-                        Literal::new(tokens[3].clone())
+                        Literal::new_expr(tokens[3].clone())
                     )]
                 }),
-                Literal::new(tokens[6].clone())
+                Literal::new_expr(tokens[6].clone())
             )
         )
     }
@@ -39,18 +39,18 @@ mod test {
 
         assert_eq!(
             ast,
-            Preamble::create(
+            Preamble::new(
                 PreambleType::LetIn(PreambleLetIn {
                     expr: vec![Binary::new(
-                        Literal::new(tokens[1].clone()),
+                        Literal::new_expr(tokens[1].clone()),
                         tokens[2].clone(),
-                        Literal::new(tokens[3].clone())
+                        Literal::new_expr(tokens[3].clone())
                     )]
                 }),
                 Binary::new(
-                    Literal::new(tokens[6].clone()),
+                    Literal::new_expr(tokens[6].clone()),
                     tokens[7].clone(),
-                    Literal::new(tokens[8].clone())
+                    Literal::new_expr(tokens[8].clone())
                 )
             )
         )
@@ -65,11 +65,11 @@ mod test {
 
         assert_eq!(
             ast,
-            Preamble::create(
+            Preamble::new(
                 PreambleType::With(PreambleWith {
-                    expr: Box::new(Literal::new(tokens[1].clone()))
+                    expr: Box::new(Literal::new_expr(tokens[1].clone()))
                 }),
-                Literal::new(tokens[3].clone())
+                Literal::new_expr(tokens[3].clone())
             )
         )
     }
@@ -83,14 +83,14 @@ mod test {
 
         assert_eq!(
             ast,
-            Preamble::create(
+            Preamble::new(
                 PreambleType::With(PreambleWith {
-                    expr: Box::new(Literal::new(tokens[1].clone()))
+                    expr: Box::new(Literal::new_expr(tokens[1].clone()))
                 }),
                 Binary::new(
-                    Literal::new(tokens[3].clone()),
+                    Literal::new_expr(tokens[3].clone()),
                     tokens[4].clone(),
-                    Literal::new(tokens[5].clone())
+                    Literal::new_expr(tokens[5].clone())
                 )
             )
         )

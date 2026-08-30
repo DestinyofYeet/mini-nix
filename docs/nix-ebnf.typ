@@ -135,7 +135,7 @@
       
       #syntax-rule(
         meta-id: [Primary <primary>],
-        rule-comment: "A string, integer or float",
+        rule-comment: "Primary types (e.g. string, integer, float, list, bools)",
         definition-list: ([
           #grouped-sequence(
             special-sequence[string],

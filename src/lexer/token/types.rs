@@ -48,7 +48,9 @@ pub enum MiscToken {
     Comma,
     Dot,
     Semicolon,
+    Colon,
     DoubleSlash,
+    DoublePlus,
 }
 
 /// Tokens related to math

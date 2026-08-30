@@ -25,7 +25,7 @@ impl AstParser {
                 | TokenType::Literal(LiteralToken::Integer(_))
                 | TokenType::Literal(LiteralToken::Float(_))
                 | TokenType::Keyword(KeywordToken::True)
-                | TokenType::Keyword(KeywordToken::False) => Ok(Literal::new(token)),
+                | TokenType::Keyword(KeywordToken::False) => Ok(Literal::new_expr(token)),
 
                 TokenType::Misc(MiscToken::LeftParen) => {
                     match self.parse_expression_no_assignemnt() {
@@ -59,8 +59,11 @@ impl AstParser {
             Err(e) => e,
         };
 
-        // todo!("parse list");
+        let list_error = match self.parse_list() {
+            Ok(value) => return Ok(value),
+            Err(e) => self.craft_error("Failed to parse list:", e),
+        };
 
-        Err(vec![primary_error])
+        Err(vec![primary_error, list_error])
     }
 }

@@ -23,7 +23,8 @@ pub struct Preamble {
 }
 
 impl Preamble {
-    pub fn create(preamble: PreambleType, expr: Expression) -> Expression {
+    #[allow(clippy::new_ret_no_self)]
+    pub fn new(preamble: PreambleType, expr: Expression) -> Expression {
         Expression::Preamble(Self {
             kind: preamble,
             expr: Box::new(expr),

@@ -13,6 +13,7 @@ pub struct Unary {
 }
 
 impl Unary {
+    #[allow(clippy::new_ret_no_self)]
     pub fn new(operator: Token, right: Expression) -> Expression {
         let unary = Self {
             operator,

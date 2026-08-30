@@ -1,5 +1,6 @@
-use itertools::Itertools;
-use tracing::trace;
+use std::time::Instant;
+
+use tracing::{debug, trace};
 
 use crate::{
     ast::{parser::error::AstError, types::Expression},
@@ -69,14 +70,14 @@ impl AstParser {
     /// Returns the current value and advances
     pub fn next(&mut self) -> Option<&Token> {
         let current = self.tokens.get(self.index_usize());
-        trace!("next: idx: {} | {current:?}", self.index);
+        // trace!("next: idx: {} | {current:?}", self.index);
         self.index += 1;
 
         current
     }
 
     fn current(&self) -> Option<&Token> {
-        trace!("current: {}", self.index);
+        // trace!("current: {}", self.index);
         self.tokens.get(self.index_usize())
     }
 
@@ -129,8 +130,19 @@ impl AstParser {
     }
 
     pub fn parse(&mut self) -> ParseResult {
+        let start = Instant::now();
         let expr = self.parse_expression()?;
+        let end = Instant::now();
+
+        if !self.is_done() {
+            return Err(self.craft_error("Did not consume all tokens!", None).into());
+        };
+
         trace!("expr: {:?}", expr);
+        debug!(
+            "Generated AST in {:.2}ms",
+            (end - start).as_nanos() as f64 / 1_000_000.0
+        );
         Ok(expr)
     }
 }

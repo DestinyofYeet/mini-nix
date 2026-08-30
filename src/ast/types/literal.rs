@@ -12,7 +12,7 @@ pub struct Literal {
 }
 
 impl Literal {
-    pub fn new(literal: Token) -> Expression {
+    pub fn new_expr(literal: Token) -> Expression {
         let literal = Self { literal };
 
         Expression::Literal(literal)

@@ -9,6 +9,7 @@ pub struct Grouping {
 }
 
 impl Grouping {
+    #[allow(clippy::new_ret_no_self)]
     pub fn new(expr: Expression) -> Expression {
         let grouping = Self {
             expr: Box::new(expr),
