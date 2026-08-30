@@ -41,10 +41,10 @@ impl Eq for LiteralToken {}
 pub enum MiscToken {
     LeftParen,
     RightParen,
-    LeftBrace,
-    RightBrace,
-    LeftBracket,
-    RightBracket,
+    LeftCurlyParen,
+    RightCurlyParen,
+    LeftSquareParen,
+    RightSquareParen,
     Comma,
     Dot,
     Semicolon,
@@ -85,6 +85,7 @@ pub enum KeywordToken {
     Let,
     In,
     With,
+    Inherit,
 }
 
 static ALL_KEYWORDS: Lazy<HashMap<&'static str, KeywordToken>> = Lazy::new(|| {
@@ -97,6 +98,7 @@ static ALL_KEYWORDS: Lazy<HashMap<&'static str, KeywordToken>> = Lazy::new(|| {
     map.insert("let", KeywordToken::Let);
     map.insert("in", KeywordToken::In);
     map.insert("with", KeywordToken::With);
+    map.insert("inherit", KeywordToken::Inherit);
 
     map
 });

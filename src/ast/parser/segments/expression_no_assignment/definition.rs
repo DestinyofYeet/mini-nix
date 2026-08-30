@@ -16,8 +16,11 @@ impl AstParser {
             Err(errors) => self.craft_error("Failed to parse arithmetic:", errors),
         };
 
-        // todo!("missing 'attrset'");
+        let attrset_err: AstError = match self.parse_attrset() {
+            Ok(value) => return Ok(value),
+            Err(errors) => self.craft_error("Failed to parse attrset:", errors),
+        };
 
-        Err(vec![arithmetic_err, function_err])
+        Err(vec![arithmetic_err, function_err, attrset_err])
     }
 }

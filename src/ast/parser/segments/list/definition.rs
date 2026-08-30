@@ -16,7 +16,7 @@ impl AstParser {
 
         let pre_idx = self.index;
 
-        match self.is_match(&[TokenType::Misc(MiscToken::LeftBracket)]) {
+        match self.is_match(&[TokenType::Misc(MiscToken::LeftSquareParen)]) {
             Some(_) => {}
             None => return Err(self.craft_error("Expected '['", None).into()),
         }
@@ -25,7 +25,7 @@ impl AstParser {
             expressions.push(expr);
         }
 
-        match self.is_match(&[TokenType::Misc(MiscToken::RightBracket)]) {
+        match self.is_match(&[TokenType::Misc(MiscToken::RightSquareParen)]) {
             Some(_) => {}
             None => {
                 self.set_index(pre_idx);

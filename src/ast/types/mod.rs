@@ -1,14 +1,17 @@
 mod assignment;
+mod attrset;
 mod binary;
 mod expression;
 mod function;
 mod grouping;
+pub mod inherit;
 mod list;
 mod literal;
 mod preamble;
 mod unary;
 
 pub use assignment::*;
+pub use attrset::*;
 pub use binary::*;
 pub use expression::*;
 pub use function::*;

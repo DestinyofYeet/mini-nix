@@ -90,8 +90,13 @@
         definition-list: ([
           #terminal[inherit]
           #optional-sequence(
-            special-sequence[Identifier of Attrset],
-            single-definition[#link(<attrset>)[Attrset]]
+            terminal[(],
+              grouped-sequence(
+                special-sequence[Identifier of Attrset],
+                single-definition[#link(<attrset>)[Attrset]],
+                
+              ),
+            terminal[)]
           )
           #repeated-sequence(qualifier: "some")[
             #special-sequence[Identifier]

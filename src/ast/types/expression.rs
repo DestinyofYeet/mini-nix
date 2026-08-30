@@ -1,4 +1,7 @@
-use crate::ast::types::{Assignment, Binary, Function, Grouping, List, Literal, Preamble, Unary};
+use crate::ast::types::{
+    Assignment, Attrset, Binary, Function, Grouping, List, Literal, Preamble, Unary,
+    inherit::Inherit,
+};
 
 pub trait Visitor<TY> {
     fn visit_binary(&self, b: &Binary) -> TY;
@@ -9,6 +12,8 @@ pub trait Visitor<TY> {
     fn visit_list(&self, l: &List) -> TY;
     fn visit_function(&self, f: &Function) -> TY;
     fn visit_assignment(&self, a: &Assignment) -> TY;
+    fn visit_attrset(&self, a: &Attrset) -> TY;
+    fn visit_inherit(&self, i: &Inherit) -> TY;
 }
 
 pub trait Expr {
@@ -25,6 +30,8 @@ pub enum Expression {
     List(List),
     Function(Function),
     Assignment(Assignment),
+    Attrset(Attrset),
+    Inherit(Inherit),
 }
 
 impl Expr for Expression {
@@ -38,6 +45,8 @@ impl Expr for Expression {
             Expression::List(list) => list.accept(visitor),
             Expression::Function(function) => function.accept(visitor),
             Expression::Assignment(assignment) => assignment.accept(visitor),
+            Expression::Attrset(attrset) => attrset.accept(visitor),
+            Expression::Inherit(inherit) => inherit.accept(visitor),
         }
     }
 }

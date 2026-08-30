@@ -60,4 +60,22 @@ impl Visitor<String> for AstPrinter {
             a.expr.accept(self)
         )
     }
+
+    fn visit_attrset(&self, a: &crate::ast::types::Attrset) -> String {
+        format!(
+            "(attrset {})",
+            a.values.iter().map(|elem| elem.accept(self)).join(", ")
+        )
+    }
+
+    fn visit_inherit(&self, i: &crate::ast::types::inherit::Inherit) -> String {
+        format!(
+            "(inherit ({}) {})",
+            match &i.inherit_from {
+                Some(value) => value.accept(self),
+                None => "".to_string(),
+            },
+            i.inherit_values.iter().map(|e| &e.unparsed).join(", ")
+        )
+    }
 }

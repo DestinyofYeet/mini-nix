@@ -17,22 +17,22 @@ mod test {
 
     #[test]
     pub fn left_brace() {
-        LexerTest::expect_single_token("{", TokenType::Misc(MiscToken::LeftBrace));
+        LexerTest::expect_single_token("{", TokenType::Misc(MiscToken::LeftCurlyParen));
     }
 
     #[test]
     pub fn right_brace() {
-        LexerTest::expect_single_token("}", TokenType::Misc(MiscToken::RightBrace));
+        LexerTest::expect_single_token("}", TokenType::Misc(MiscToken::RightCurlyParen));
     }
 
     #[test]
     pub fn left_bracket() {
-        LexerTest::expect_single_token("[", TokenType::Misc(MiscToken::LeftBracket));
+        LexerTest::expect_single_token("[", TokenType::Misc(MiscToken::LeftSquareParen));
     }
 
     #[test]
     pub fn right_bracket() {
-        LexerTest::expect_single_token("]", TokenType::Misc(MiscToken::RightBracket));
+        LexerTest::expect_single_token("]", TokenType::Misc(MiscToken::RightSquareParen));
     }
 
     #[test]

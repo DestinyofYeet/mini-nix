@@ -64,10 +64,10 @@ pub fn parse_text(source: &str) -> Result<Vec<Token>, Vec<ParserError>> {
 
             '(' => TokenType::Misc(MiscToken::LeftParen),
             ')' => TokenType::Misc(MiscToken::RightParen),
-            '{' => TokenType::Misc(MiscToken::LeftBrace),
-            '}' => TokenType::Misc(MiscToken::RightBrace),
-            '[' => TokenType::Misc(MiscToken::LeftBracket),
-            ']' => TokenType::Misc(MiscToken::RightBracket),
+            '{' => TokenType::Misc(MiscToken::LeftCurlyParen),
+            '}' => TokenType::Misc(MiscToken::RightCurlyParen),
+            '[' => TokenType::Misc(MiscToken::LeftSquareParen),
+            ']' => TokenType::Misc(MiscToken::RightSquareParen),
             '#' => {
                 loop {
                     let (_, next) = match iterator.next() {

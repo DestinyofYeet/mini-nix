@@ -1,10 +1,12 @@
 pub mod arithmetic;
 mod arithmetic_mul;
 mod assignment;
+mod attrset;
 mod expression;
 mod expression_no_assignment;
 mod function;
 mod identifier;
+mod inherit;
 mod list;
 pub mod primary;
 mod primary_or_identifier;
