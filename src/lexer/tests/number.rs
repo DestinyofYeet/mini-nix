@@ -49,7 +49,7 @@ mod test {
             input,
             vec![
                 Token::new(TokenType::Literal(LiteralToken::Float(1.0)), "1.0", 1, 1),
-                Token::new(TokenType::Literal(LiteralToken::Float(2.0)), "2.0", 1, 3),
+                Token::new(TokenType::Literal(LiteralToken::Float(2.0)), "2.0", 1, 4),
             ],
         );
     }

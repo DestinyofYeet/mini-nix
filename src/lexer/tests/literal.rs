@@ -34,7 +34,7 @@ mod test {
                     TokenType::Literal(LiteralToken::Identifier("a".to_string())),
                     "a".to_string(),
                     1,
-                    3,
+                    4,
                 ),
             ],
         );
